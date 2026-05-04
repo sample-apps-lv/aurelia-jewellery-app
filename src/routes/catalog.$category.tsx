@@ -112,7 +112,7 @@ function CatalogPage() {
           {filtered.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground">
               <p>No pieces match your selection.</p>
-              <Link to="/catalog/rings" className="mt-4 inline-block text-gold border-b border-gold pb-1 text-xs tracking-luxe">Reset</Link>
+              <Link to="/catalog/$category" params={{ category: "rings" }} className="mt-4 inline-block text-gold border-b border-gold pb-1 text-xs tracking-luxe">Reset</Link>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

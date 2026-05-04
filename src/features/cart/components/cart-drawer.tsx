@@ -38,7 +38,7 @@ export function CartDrawer() {
               <div className="flex-1 flex flex-col items-center justify-center text-center px-8 gap-4">
                 <ShoppingBag className="h-12 w-12 text-muted-foreground" />
                 <p className="text-muted-foreground">Your bag is empty.</p>
-                <Link to="/catalog/rings" onClick={close} className="text-xs tracking-luxe text-gold border-b border-gold pb-1">
+                <Link to="/catalog/$category" params={{ category: "rings" }} onClick={close} className="text-xs tracking-luxe text-gold border-b border-gold pb-1">
                   Discover the Collection
                 </Link>
               </div>

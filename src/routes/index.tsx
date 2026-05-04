@@ -49,7 +49,7 @@ function Index() {
             Handcrafted in our Paris atelier. Designed for the moments that outlast time.
           </p>
           <Link
-            to="/catalog/rings"
+            to="/catalog/$category" params={{ category: "rings" }}
             className="inline-flex items-center gap-3 bg-gold text-noir px-8 py-4 text-xs tracking-luxe hover:bg-gold-light transition-all hover:gap-5"
           >
             Shop the Collection <ArrowRight className="h-4 w-4" />
@@ -108,7 +108,7 @@ function Index() {
             <p className="text-xs tracking-luxe text-gold mb-3">Loved by All</p>
             <h2 className="font-serif text-4xl md:text-5xl">Bestsellers</h2>
           </div>
-          <Link to="/catalog/rings" className="text-xs tracking-luxe hover:text-gold border-b border-foreground hover:border-gold pb-1 hidden md:inline-block">
+          <Link to="/catalog/$category" params={{ category: "rings" }} className="text-xs tracking-luxe hover:text-gold border-b border-foreground hover:border-gold pb-1 hidden md:inline-block">
             View All
           </Link>
         </div>

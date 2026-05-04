@@ -55,7 +55,7 @@ function AccountPage() {
         <h2 className="font-serif text-2xl flex items-center gap-3 mb-6"><Heart className="h-5 w-5 text-gold" /> Wishlist</h2>
         {wishProducts.length === 0 ? (
           <div className="text-muted-foreground text-sm">
-            Your wishlist is empty. <Link to="/catalog/rings" className="text-gold border-b border-gold">Discover pieces</Link>.
+            Your wishlist is empty. <Link to="/catalog/$category" params={{ category: "rings" }} className="text-gold border-b border-gold">Discover pieces</Link>.
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

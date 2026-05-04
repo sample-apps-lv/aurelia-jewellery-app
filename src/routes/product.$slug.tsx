@@ -26,7 +26,7 @@ export const Route = createFileRoute("/product/$slug")({
   notFoundComponent: () => (
     <div className="pt-40 text-center px-6">
       <h1 className="font-serif text-4xl">Piece not found</h1>
-      <Link to="/catalog/rings" className="text-xs tracking-luxe text-gold mt-6 inline-block border-b border-gold pb-1">
+      <Link to="/catalog/$category" params={{ category: "rings" }} className="text-xs tracking-luxe text-gold mt-6 inline-block border-b border-gold pb-1">
         Browse the Collection
       </Link>
     </div>

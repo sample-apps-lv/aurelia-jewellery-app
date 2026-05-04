@@ -52,7 +52,7 @@ export function Header() {
             ))}
           </nav>
           <div className="lg:hidden flex">
-            <Link to="/catalog/rings" className="text-xs tracking-luxe hover:text-gold">
+            <Link to="/catalog/$category" params={{ category: "rings" }} className="text-xs tracking-luxe hover:text-gold">
               Shop
             </Link>
           </div>
