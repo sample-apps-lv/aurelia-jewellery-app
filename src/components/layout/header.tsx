@@ -42,8 +42,9 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-7 text-xs tracking-luxe">
             {NAV.map((n) => (
               <Link
-                key={n.to}
-                to={n.to}
+                key={n.category}
+                to="/catalog/$category"
+                params={{ category: n.category }}
                 className="hover:text-gold transition-colors"
                 activeProps={{ className: "text-gold" }}
               >
