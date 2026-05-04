@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/features/cart/store/use-cart";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { label: "Rings", to: "/catalog/rings" },
-  { label: "Necklaces", to: "/catalog/necklaces" },
-  { label: "Earrings", to: "/catalog/earrings" },
-  { label: "Bracelets", to: "/catalog/bracelets" },
-  { label: "Bridal", to: "/catalog/bridal" },
+const NAV: { label: string; category: "rings" | "necklaces" | "earrings" | "bracelets" | "bridal" }[] = [
+  { label: "Rings", category: "rings" },
+  { label: "Necklaces", category: "necklaces" },
+  { label: "Earrings", category: "earrings" },
+  { label: "Bracelets", category: "bracelets" },
+  { label: "Bridal", category: "bridal" },
 ];
 
 export function Header() {
