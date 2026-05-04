@@ -1,22 +1,29 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { CartDrawer } from "@/features/cart/components/cart-drawer";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
+
+interface RouterContext {
+  queryClient: QueryClient;
+}
+
+const APP_NAME = import.meta.env.VITE_APP_NAME || "Aurelia";
+const APP_DESC = import.meta.env.VITE_APP_DESCRIPTION || "Timeless fine jewelry.";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <h1 className="font-serif text-7xl">404</h1>
+        <h2 className="mt-4 font-serif text-xl">Page not found</h2>
+        <p className="mt-2 text-sm text-muted-foreground">This page has wandered off.</p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
+          <Link to="/" className="text-xs tracking-luxe text-gold border-b border-gold pb-1">
+            Return Home
           </Link>
         </div>
       </div>
@@ -24,26 +31,19 @@ function NotFoundComponent() {
   );
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: `${APP_NAME} — Fine Jewelry` },
+      { name: "description", content: APP_DESC },
+      { property: "og:title", content: `${APP_NAME} — Fine Jewelry` },
+      { property: "og:description", content: APP_DESC },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -65,5 +65,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  const { queryClient } = Route.useRouteContext();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Header />
+      <main className="min-h-screen">
+        <Outlet />
+      </main>
+      <Footer />
+      <CartDrawer />
+      <Toaster />
+    </QueryClientProvider>
+  );
 }
