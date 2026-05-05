@@ -1,0 +1,10 @@
+services:
+  jewellery_app:
+    container_name: jewellery_app
+    build: "."
+    network_mode: host
+    environment:
+      VITE_PORT: 11001  // change 11001 to any port
+
+
+
