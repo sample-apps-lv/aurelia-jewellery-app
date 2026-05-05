@@ -1,4 +1,4 @@
-FROM node:18.3.0-alpine as builder
+FROM node:22-alpine as builder
 WORKDIR /app/ui
 COPY . .
 RUN npm install --force
