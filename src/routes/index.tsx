@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
 import { 
-  ArrowRight, 
   ShieldCheck, 
   RefreshCw, 
   Truck, 
@@ -9,23 +7,19 @@ import {
   ChevronRight,
   Video,
   MapPin,
-  Smartphone
+  Smartphone,
+  Heart
 } from "lucide-react";
-import hero from "@/assets/hero.jpg";
 import catBridal from "@/assets/cat-bridal.jpg";
 import catEveryday from "@/assets/cat-everyday.jpg";
 import catStatement from "@/assets/cat-statement.jpg";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { ProductCard } from "@/features/catalog/components/product-card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import heroVideo from "@/assets/hero.webm";
+import { CategoryGrid } from "@/components/sections/category-grid";
+import { EnrollPlanSection } from "@/components/sections/enroll-plan-section";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,15 +30,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const QUICK_LINKS = [
-  { name: "Rings", icon: "💍", to: "/catalog/rings" },
-  { name: "Earrings", icon: "💎", to: "/catalog/earrings" },
-  { name: "Pendants", icon: "📿", to: "/catalog/necklaces" },
-  { name: "Bracelets", icon: "⌚", to: "/catalog/bracelets" },
-  { name: "Solitaires", icon: "✨", to: "/catalog/rings" },
-  { name: "All Jewellery", icon: "🌟", to: "/catalog/rings" },
-];
 
 const PRICE_POINTS = [
   { label: "Under 10k", to: "/catalog/rings" },
@@ -60,9 +45,6 @@ const PROMISES = [
   { icon: Truck, title: "Free Shipping", desc: "Insured Delivery" },
   { icon: Star, title: "30-Day Returns", desc: "Money Back Guarantee" },
 ];
-
-import heroVideo from "@/assets/hero.webm";
-import { CategoryGrid } from "@/components/sections/category-grid";
 
 function Index() {
   const { data: products = [] } = useProducts();
@@ -106,6 +88,9 @@ function Index() {
 
       {/* Category Grid Section */}
       <CategoryGrid />
+
+      {/* Enroll Plan Section */}
+      <EnrollPlanSection />
 
       {/* Trust Bar (Bluestone Style) */}
       <section className="bg-secondary/30 py-4 hidden md:block">
@@ -237,7 +222,7 @@ function Index() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="aspect-square bg-muted relative group overflow-hidden">
                 <img 
-                  src={hero} 
+                  src={heroVideo} 
                   alt="Social Post" 
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
                 />
