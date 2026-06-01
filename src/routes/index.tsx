@@ -7,19 +7,17 @@ import {
   ChevronRight,
   Video,
   MapPin,
-  Smartphone,
-  Heart
+  Smartphone
 } from "lucide-react";
-import catBridal from "@/assets/cat-bridal.jpg";
-import catEveryday from "@/assets/cat-everyday.jpg";
-import catStatement from "@/assets/cat-statement.jpg";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import heroVideo from "@/assets/hero.webm";
 import { CategoryGrid } from "@/components/sections/category-grid";
+import { PromoCarousel } from "@/components/sections/promo-carousel";
 import { EnrollPlanSection } from "@/components/sections/enroll-plan-section";
+import { CollectionsSection } from "@/components/sections/collections-section";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,6 +79,9 @@ function Index() {
               <Button size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
                 Explore Collection
               </Button>
+              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
+                Book Video Call
+              </Button>
             </div>
           </div>
         </div>
@@ -89,8 +90,14 @@ function Index() {
       {/* Category Grid Section */}
       <CategoryGrid />
 
+      {/* Promo Carousel Section */}
+      <PromoCarousel />
+
       {/* Enroll Plan Section */}
       <EnrollPlanSection />
+
+      {/* Collections Section */}
+      <CollectionsSection />
 
       {/* Trust Bar (Bluestone Style) */}
       <section className="bg-secondary/30 py-4 hidden md:block">
@@ -132,41 +139,6 @@ function Index() {
               >
                 {price.label}
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Collections */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-serif">Featured Collections</h2>
-              <p className="text-muted-foreground mt-2">Curated designs for every mood</p>
-            </div>
-            <Link to="/catalog/rings" className="text-gold font-medium flex items-center gap-1 hover:underline">
-              View All <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "Dainty Dreams", img: catEveryday, desc: "Minimalist everyday wear" },
-              { title: "Bold Statements", img: catStatement, desc: "Make your presence felt" },
-              { title: "The Bridal Edit", img: catBridal, desc: "For your forever after" },
-            ].map((col) => (
-              <div key={col.title} className="group cursor-pointer">
-                <div className="relative aspect-[4/5] overflow-hidden mb-4">
-                  <img 
-                    src={col.img} 
-                    alt={col.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                  />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                </div>
-                <h3 className="text-xl font-serif mb-1">{col.title}</h3>
-                <p className="text-sm text-muted-foreground">{col.desc}</p>
-              </div>
             ))}
           </div>
         </div>
