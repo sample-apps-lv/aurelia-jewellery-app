@@ -1,135 +1,255 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { 
+  ArrowRight, 
+  ShieldCheck, 
+  RefreshCw, 
+  Truck, 
+  Star, 
+  ChevronRight,
+  Video,
+  MapPin,
+  Smartphone
+} from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import catBridal from "@/assets/cat-bridal.jpg";
 import catEveryday from "@/assets/cat-everyday.jpg";
 import catStatement from "@/assets/cat-statement.jpg";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { ProductCard } from "@/features/catalog/components/product-card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aurelia — Timeless Fine Jewelry" },
-      { name: "description", content: "Discover Aurelia: handcrafted gold and diamond jewelry, made for the moments that endure." },
-      { property: "og:title", content: "Aurelia — Timeless Fine Jewelry" },
+      { title: "Gajanand Jewellers — Exquisite Gold & Diamond Jewelry" },
+      { name: "description", content: "Shop the latest in fine jewelry. From diamond rings to gold necklaces, find the perfect piece for every occasion." },
     ],
   }),
   component: Index,
 });
 
-const COLLECTIONS = [
-  { title: "The Bridal Collection", caption: "Vows in Light", image: catBridal, to: "/catalog/bridal" },
-  { title: "Everyday Elegance", caption: "Worn Daily, Treasured Always", image: catEveryday, to: "/catalog/necklaces" },
-  { title: "Statement Pieces", caption: "Bold by Design", image: catStatement, to: "/catalog/earrings" },
+const QUICK_LINKS = [
+  { name: "Rings", icon: "💍", to: "/catalog/rings" },
+  { name: "Earrings", icon: "💎", to: "/catalog/earrings" },
+  { name: "Pendants", icon: "📿", to: "/catalog/necklaces" },
+  { name: "Bracelets", icon: "⌚", to: "/catalog/bracelets" },
+  { name: "Solitaires", icon: "✨", to: "/catalog/rings" },
+  { name: "All Jewellery", icon: "🌟", to: "/catalog/rings" },
 ];
+
+const PRICE_POINTS = [
+  { label: "Under 10k", to: "/catalog/rings" },
+  { label: "10k - 20k", to: "/catalog/rings" },
+  { label: "20k - 30k", to: "/catalog/rings" },
+  { label: "30k - 50k", to: "/catalog/rings" },
+  { label: "Above 50k", to: "/catalog/rings" },
+];
+
+const PROMISES = [
+  { icon: ShieldCheck, title: "100% Certified", desc: "Authenticity Guaranteed" },
+  { icon: RefreshCw, title: "Lifetime Exchange", desc: "Buy-back Policy" },
+  { icon: Truck, title: "Free Shipping", desc: "Insured Delivery" },
+  { icon: Star, title: "30-Day Returns", desc: "Money Back Guarantee" },
+];
+
+import heroVideo from "@/assets/hero.webm";
+import { CategoryGrid } from "@/components/sections/category-grid";
 
 function Index() {
   const { data: products = [] } = useProducts();
   const bestsellers = products.filter((p) => p.isBestseller);
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative h-screen min-h-[700px] -mt-20 flex items-center justify-center text-cream overflow-hidden">
-        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1280} />
-        <div className="absolute inset-0 bg-gradient-to-b from-noir/60 via-noir/30 to-noir/80" />
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 text-center px-6 max-w-3xl"
+    <div className="bg-white">
+      {/* Hero Video Section */}
+      <section className="relative h-[400px] md:h-[700px] w-full overflow-hidden">
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover"
         >
-          <p className="text-xs tracking-luxe text-gold mb-6">Autumn / Winter Collection</p>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.05] mb-6">
-            Light, <em className="italic text-gold-gradient">Eternal</em>.
-          </h1>
-          <p className="text-base md:text-lg text-cream/80 max-w-xl mx-auto mb-10 font-light">
-            Handcrafted in our Paris atelier. Designed for the moments that outlast time.
-          </p>
-          <Link
-            to="/catalog/$category" params={{ category: "rings" }}
-            className="inline-flex items-center gap-3 bg-gold text-noir px-8 py-4 text-xs tracking-luxe hover:bg-gold-light transition-all hover:gap-5"
-          >
-            Shop the Collection <ArrowRight className="h-4 w-4" />
-          </Link>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-cream/60 text-[10px] tracking-luxe"
-        >
-          Scroll
-        </motion.div>
+          <source src={heroVideo} type="video/webm" />
+        </video>
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 flex items-center px-6 lg:px-20">
+          <div className="max-w-xl text-white">
+            <Badge className="mb-4 bg-gold text-white hover:bg-gold-light border-none rounded-none px-4 py-1 text-[10px] font-bold tracking-widest">
+              EXCLUSIVE COLLECTION
+            </Badge>
+            <h2 className="text-4xl md:text-7xl font-serif mb-6 leading-tight">
+              Crafting <br /> <span className="text-gold-light italic">Eternal</span> Memories
+            </h2>
+            <p className="text-lg mb-8 text-white/90 hidden md:block font-light tracking-wide max-w-md">
+              Discover our masterfully handcrafted diamond and gold jewellery, where every piece tells a story of timeless beauty.
+            </p>
+            <div className="flex gap-4">
+              <Button size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
+                Explore Collection
+              </Button>
+              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
+                Book Video Call
+              </Button>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Brand strip */}
-      <section className="py-20 px-6 lg:px-10 max-w-4xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.8 }}
-        >
-          <p className="text-xs tracking-luxe text-gold mb-4">Maison Aurelia</p>
-          <h2 className="font-serif text-3xl md:text-5xl leading-tight">
-            Three generations of artisans, one enduring philosophy: jewelry should be felt before it is seen.
-          </h2>
-        </motion.div>
+      {/* Category Grid Section */}
+      <CategoryGrid />
+
+      {/* Trust Bar (Bluestone Style) */}
+      <section className="bg-secondary/30 py-4 hidden md:block">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="flex items-center gap-2">
+              <Video className="w-4 h-4 text-gold" />
+              <span>Free Video Call</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-gold" />
+              <span>Find a Store</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-gold" />
+              <span>Try at Home</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-gold" />
+              <span>The BlueStone Promise</span>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Collections grid */}
-      <section className="px-6 lg:px-10 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
-          {COLLECTIONS.map((c, i) => (
-            <motion.div
-              key={c.title}
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.7, delay: i * 0.1 }}
-            >
-              <Link to={c.to} className="group block relative overflow-hidden aspect-[3/4]">
-                <img src={c.image} alt={c.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-noir/80 via-noir/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-8 text-cream">
-                  <p className="text-xs tracking-luxe text-gold mb-2">{c.caption}</p>
-                  <h3 className="font-serif text-2xl md:text-3xl">{c.title}</h3>
-                  <span className="inline-block mt-3 text-xs tracking-luxe border-b border-cream/40 pb-1 group-hover:border-gold group-hover:text-gold transition">
-                    Explore
-                  </span>
-                </div>
+      {/* Shop by Price */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-serif mb-4">Shop by Price</h2>
+            <div className="w-20 h-1 bg-gold mx-auto" />
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {PRICE_POINTS.map((price) => (
+              <Link
+                key={price.label}
+                to={price.to}
+                className="px-8 py-3 bg-white border border-border hover:border-gold hover:text-gold transition-all text-sm font-medium"
+              >
+                {price.label}
               </Link>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Collections */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-serif">Featured Collections</h2>
+              <p className="text-muted-foreground mt-2">Curated designs for every mood</p>
+            </div>
+            <Link to="/catalog/rings" className="text-gold font-medium flex items-center gap-1 hover:underline">
+              View All <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: "Dainty Dreams", img: catEveryday, desc: "Minimalist everyday wear" },
+              { title: "Bold Statements", img: catStatement, desc: "Make your presence felt" },
+              { title: "The Bridal Edit", img: catBridal, desc: "For your forever after" },
+            ].map((col) => (
+              <div key={col.title} className="group cursor-pointer">
+                <div className="relative aspect-[4/5] overflow-hidden mb-4">
+                  <img 
+                    src={col.img} 
+                    alt={col.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+                </div>
+                <h3 className="text-xl font-serif mb-1">{col.title}</h3>
+                <p className="text-sm text-muted-foreground">{col.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Bestsellers */}
-      <section className="px-6 lg:px-10 max-w-7xl mx-auto mt-32">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <p className="text-xs tracking-luxe text-gold mb-3">Loved by All</p>
-            <h2 className="font-serif text-4xl md:text-5xl">Bestsellers</h2>
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-serif mb-4">Trending Now</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Discover the most loved pieces from our current collection, chosen by you.
+            </p>
           </div>
-          <Link to="/catalog/$category" params={{ category: "rings" }} className="text-xs tracking-luxe hover:text-gold border-b border-foreground hover:border-gold pb-1 hidden md:inline-block">
-            View All
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {bestsellers.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
-          ))}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+            {bestsellers.slice(0, 4).map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+          <div className="mt-16 text-center">
+            <Button variant="outline" size="lg" className="rounded-none border-primary px-12 py-6">
+              Shop All Bestsellers
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* Editorial quote */}
-      <section className="mt-32 py-32 bg-noir text-cream text-center px-6">
-        <motion.blockquote
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          viewport={{ once: true }} transition={{ duration: 1.2 }}
-          className="max-w-3xl mx-auto font-serif text-3xl md:text-5xl italic leading-tight"
-        >
-          "A piece of Aurelia is never simply worn — it is <span className="text-gold-gradient not-italic">inherited</span>."
-        </motion.blockquote>
-        <p className="mt-8 text-xs tracking-luxe text-cream/60">— Vogue Paris</p>
+      {/* The BlueStone Promise (Icon Grid) */}
+      <section className="py-20 bg-secondary/20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {PROMISES.map((promise) => (
+              <div key={promise.title} className="text-center flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 text-gold shadow-sm">
+                  <promise.icon className="w-8 h-8" />
+                </div>
+                <h4 className="font-medium text-lg mb-2">{promise.title}</h4>
+                <p className="text-sm text-muted-foreground">{promise.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
-    </>
+
+      {/* Social Proof */}
+      <section className="py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif mb-4">#GajanandJewellersAndMe</h2>
+            <p className="text-muted-foreground">Share your sparkle on Instagram</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="aspect-square bg-muted relative group overflow-hidden">
+                <img 
+                  src={hero} 
+                  alt="Social Post" 
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/20 transition-opacity">
+                  <Badge variant="secondary" className="bg-white text-black">Shop the Look</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
