@@ -82,6 +82,8 @@ function Index() {
           <source src={heroVideo} type="video/webm" />
         </video>
         <div className="absolute inset-0 bg-black/30" />
+        {/* Bottom Fade */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
         <div className="absolute inset-0 flex items-center px-6 lg:px-20">
           <div className="max-w-xl text-white">
             <Badge className="mb-4 bg-gold text-white hover:bg-gold-light border-none rounded-none px-4 py-1 text-[10px] font-bold tracking-widest">
@@ -96,9 +98,6 @@ function Index() {
             <div className="flex gap-4">
               <Button size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
                 Explore Collection
-              </Button>
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
-                Book Video Call
               </Button>
             </div>
           </div>

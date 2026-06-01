@@ -26,15 +26,15 @@ const CATEGORIES = [
   { name: "Bracelets", image: p5, to: "/catalog/bracelets" },
   { name: "Bangles", image: p6, to: "/catalog/bracelets" },
   { name: "Kada", image: catBridal, to: "/catalog/bracelets" },
-  { name: "Gold Chains", image: catEveryday, to: "/catalog/necklaces" },
-  { name: "All Jewellery", image: catStatement, to: "/catalog/rings" },
+  // { name: "Gold Chains", image: catEveryday, to: "/catalog/necklaces" },
+  // { name: "All Jewellery", image: catStatement, to: "/catalog/rings" },
 ];
 
 export function CategoryGrid() {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 md:gap-6">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.name}
@@ -45,7 +45,7 @@ export function CategoryGrid() {
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-contain mix-blend-multiply"
+                  className="w-full h-full object-contain mix-blend-multiply rounded-[14px]"
                 />
               </div>
               <span className="text-[11px] font-bold text-[#444] text-center group-hover:text-primary transition-colors uppercase tracking-tight">

@@ -265,8 +265,6 @@ export function Header() {
 
           {/* Action Icons */}
           <div className="flex items-center">
-            <ActionItem icon={History} label="Recently viewed" to="/account" />
-            <ActionItem icon={Video} label="Video call cart" to="/account" />
             <ActionItem icon={MapPin} label="Find a store" to="/account" />
             <ActionItem icon={Heart} label="Wishlist" to="/account" />
             <ActionItem icon={ShoppingBag} label="Cart" onClick={open} badge={count} />
