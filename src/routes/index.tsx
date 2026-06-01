@@ -18,6 +18,8 @@ import { CategoryGrid } from "@/components/sections/category-grid";
 import { PromoCarousel } from "@/components/sections/promo-carousel";
 import { EnrollPlanSection } from "@/components/sections/enroll-plan-section";
 import { CollectionsSection } from "@/components/sections/collections-section";
+import { useQuery } from "@tanstack/react-query";
+import { getCollectionProducts } from "@/lib/shopify";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,6 +30,8 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
+const CATEGORY_COLLECTION_ID = "337363632317";
 
 const PRICE_POINTS = [
   { label: "Under 10k", to: "/catalog/rings" },
@@ -45,6 +49,11 @@ const PROMISES = [
 ];
 
 function Index() {
+  const { data: categoryItems = [] } = useQuery({
+    queryKey: ["category-collection-products", CATEGORY_COLLECTION_ID],
+    queryFn: () => getCollectionProducts(CATEGORY_COLLECTION_ID),
+  });
+  
   const { data: products = [] } = useProducts();
   const bestsellers = products.filter((p) => p.isBestseller);
 
@@ -88,7 +97,7 @@ function Index() {
       </section>
 
       {/* Category Grid Section */}
-      <CategoryGrid />
+      <CategoryGrid items={categoryItems} />
 
       {/* Promo Carousel Section */}
       <PromoCarousel />
