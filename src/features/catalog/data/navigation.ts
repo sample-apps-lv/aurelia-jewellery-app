@@ -10,9 +10,8 @@ export const DEFAULT_NAV_LEFT = [
     label: "10+1 Monthly Plans", 
     category: "rings",
     subItems: [
-      { label: "Gold Mine", url: "/catalog/rings" },
-      { label: "Gold Reserve", url: "/catalog/rings" },
-      { label: "Flexi Gold", url: "/catalog/rings" }
+      { label: "Gold Plans", url: "/plans/gold" },
+      { label: "Silver Plans", url: "/plans/silver" },
     ]
   },
   { 

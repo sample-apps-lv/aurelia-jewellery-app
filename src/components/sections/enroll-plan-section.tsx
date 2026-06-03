@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
 
 interface EnrollPlanSectionProps {
   data: {
@@ -26,11 +27,13 @@ export function EnrollPlanSection({ data }: EnrollPlanSectionProps) {
               {data.description}
             </p>
           </div>
-          <Button 
-            className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-10 py-6 rounded-md shadow-sm border-none text-sm transition-all"
-          >
-            {data.ctaText}
-          </Button>
+          <Link to="/plans/$plan" params={{ plan: "gold" }}>
+            <Button 
+              className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-10 py-6 rounded-md shadow-sm border-none text-sm transition-all"
+            >
+              {data.ctaText}
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

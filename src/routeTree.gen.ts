@@ -17,6 +17,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as PlansPlanRouteImport } from './routes/plans.$plan'
 import { Route as CatalogCategoryRouteImport } from './routes/catalog.$category'
 
 const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
@@ -59,6 +60,11 @@ const ProductSlugRoute = ProductSlugRouteImport.update({
   path: '/product/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlansPlanRoute = PlansPlanRouteImport.update({
+  id: '/plans/$plan',
+  path: '/plans/$plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatalogCategoryRoute = CatalogCategoryRouteImport.update({
   id: '/catalog/$category',
   path: '/catalog/$category',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
+  '/plans/$plan': typeof PlansPlanRoute
   '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
+  '/plans/$plan': typeof PlansPlanRoute
   '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
+  '/plans/$plan': typeof PlansPlanRoute
   '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/terms-and-conditions'
     | '/catalog/$category'
+    | '/plans/$plan'
     | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/terms-and-conditions'
     | '/catalog/$category'
+    | '/plans/$plan'
     | '/product/$slug'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/terms-and-conditions'
     | '/catalog/$category'
+    | '/plans/$plan'
     | '/product/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   CatalogCategoryRoute: typeof CatalogCategoryRoute
+  PlansPlanRoute: typeof PlansPlanRoute
   ProductSlugRoute: typeof ProductSlugRoute
 }
 
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plans/$plan': {
+      id: '/plans/$plan'
+      path: '/plans/$plan'
+      fullPath: '/plans/$plan'
+      preLoaderRoute: typeof PlansPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/catalog/$category': {
       id: '/catalog/$category'
       path: '/catalog/$category'
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
   CatalogCategoryRoute: CatalogCategoryRoute,
+  PlansPlanRoute: PlansPlanRoute,
   ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
