@@ -53,8 +53,6 @@ export interface HomepageConfig {
     videoUrl: string;
     ctaPrimaryText: string;
     ctaPrimaryLink: string;
-    ctaSecondaryText: string;
-    ctaSecondaryLink: string;
   };
   promos: Array<{
     id: number;

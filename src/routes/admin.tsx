@@ -66,8 +66,6 @@ const homepageSchema = z.object({
     videoUrl: z.string(),
     ctaPrimaryText: z.string(),
     ctaPrimaryLink: z.string(),
-    ctaSecondaryText: z.string(),
-    ctaSecondaryLink: z.string(),
   }),
   promos: z.array(z.object({
     id: z.number(),

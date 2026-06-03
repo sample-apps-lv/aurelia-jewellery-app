@@ -12,8 +12,6 @@ const INITIAL_HOME_DATA: HomepageConfig = {
     videoUrl: "", // We can use the assets URL here if we know it, or leave empty for now
     ctaPrimaryText: "Explore Collection",
     ctaPrimaryLink: "/catalog/rings",
-    ctaSecondaryText: "Book Video Call",
-    ctaSecondaryLink: "#"
   },
   promos: [
     {
@@ -249,9 +247,24 @@ export const initializeHomepageDataFn = createServerFn({ method: "POST" })
 export const updateHomepageConfigFn = createServerFn({ method: "POST" })
   .inputValidator((data: HomepageConfig) => data)
   .handler(async ({ data }) => {
+    // 1. Get the ID by handle first
+    const checkQuery = `
+      query getExistingConfig {
+        metaobjectByHandle(handle: { type: "homepage_settings", handle: "homepage-config" }) {
+          id
+        }
+      }
+    `;
+    const checkRes = await shopifyAdminFetch<{ metaobjectByHandle: { id: string } | null }>({ query: checkQuery });
+    const existingId = checkRes.data.metaobjectByHandle?.id;
+
+    if (!existingId) {
+      throw new Error("Homepage configuration not found. Please initialize it first.");
+    }
+
     const query = `
-      mutation metaobjectUpdate($handle: MetaobjectHandleInput!, $metaobject: MetaobjectUpdateInput!) {
-        metaobjectUpdate(handle: $handle, metaobject: $metaobject) {
+      mutation metaobjectUpdate($id: ID!, $metaobject: MetaobjectUpdateInput!) {
+        metaobjectUpdate(id: $id, metaobject: $metaobject) {
           metaobject {
             id
           }
@@ -264,10 +277,7 @@ export const updateHomepageConfigFn = createServerFn({ method: "POST" })
     `;
 
     const variables = {
-      handle: {
-        type: "homepage_settings",
-        handle: "homepage-config"
-      },
+      id: existingId,
       metaobject: {
         fields: [
           {

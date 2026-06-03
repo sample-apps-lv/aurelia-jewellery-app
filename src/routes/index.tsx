@@ -103,9 +103,6 @@ function Index() {
               <Button asChild size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
                 <Link to={hero?.ctaPrimaryLink as any || "/catalog/rings"}>{hero?.ctaPrimaryText || "Explore Collection"}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
-                <Link to={hero?.ctaSecondaryLink as any || "#"}>{hero?.ctaSecondaryText || "Book Video Call"}</Link>
-              </Button>
             </div>
           </div>
         </div>
