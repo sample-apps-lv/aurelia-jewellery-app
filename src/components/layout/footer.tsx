@@ -5,8 +5,8 @@ export function Footer() {
   return (
     <footer className="bg-[#f9f9f9] text-foreground mt-24 border-t">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10">
-          <div className="col-span-2 lg:col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10">
+          <div className="col-span-1">
             <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Know Our Story</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-gold">About Us</Link></li>
@@ -33,6 +33,15 @@ export function Footer() {
               <li><Link to="/" className="hover:text-gold">Diamond Guide</Link></li>
               <li><Link to="/" className="hover:text-gold">Jewellery Care</Link></li>
               <li><Link to="/" className="hover:text-gold">Ring Size Guide</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Legal</h4>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li><Link to="/privacy-policy" className="hover:text-gold">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className="hover:text-gold">Terms & Conditions</Link></li>
+              <li><Link to="/fraud-warning" className="hover:text-gold">Fraud Warning</Link></li>
             </ul>
           </div>
 

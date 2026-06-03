@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as FraudWarningRouteImport } from './routes/fraud-warning'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
@@ -16,6 +19,21 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as CatalogCategoryRouteImport } from './routes/catalog.$category'
 
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FraudWarningRoute = FraudWarningRouteImport.update({
+  id: '/fraud-warning',
+  path: '/fraud-warning',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -52,6 +70,9 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/fraud-warning': typeof FraudWarningRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -60,6 +81,9 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/fraud-warning': typeof FraudWarningRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -69,6 +93,9 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/fraud-warning': typeof FraudWarningRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/product/$slug': typeof ProductSlugRoute
 }
@@ -79,6 +106,9 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/checkout'
+    | '/fraud-warning'
+    | '/privacy-policy'
+    | '/terms-and-conditions'
     | '/catalog/$category'
     | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +117,9 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/checkout'
+    | '/fraud-warning'
+    | '/privacy-policy'
+    | '/terms-and-conditions'
     | '/catalog/$category'
     | '/product/$slug'
   id:
@@ -95,6 +128,9 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/checkout'
+    | '/fraud-warning'
+    | '/privacy-policy'
+    | '/terms-and-conditions'
     | '/catalog/$category'
     | '/product/$slug'
   fileRoutesById: FileRoutesById
@@ -104,12 +140,36 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRoute
   CheckoutRoute: typeof CheckoutRoute
+  FraudWarningRoute: typeof FraudWarningRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   CatalogCategoryRoute: typeof CatalogCategoryRoute
   ProductSlugRoute: typeof ProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fraud-warning': {
+      id: '/fraud-warning'
+      path: '/fraud-warning'
+      fullPath: '/fraud-warning'
+      preLoaderRoute: typeof FraudWarningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -160,6 +220,9 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AdminRoute: AdminRoute,
   CheckoutRoute: CheckoutRoute,
+  FraudWarningRoute: FraudWarningRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
   CatalogCategoryRoute: CatalogCategoryRoute,
   ProductSlugRoute: ProductSlugRoute,
 }
