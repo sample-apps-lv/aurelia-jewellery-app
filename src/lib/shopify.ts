@@ -46,6 +46,40 @@ export type ShopifyProduct = {
 };
 
 export interface HomepageConfig {
+  header: {
+    logoText: string;
+    searchPlaceholder: string;
+    findStoreLabel: string;
+    wishlistLabel: string;
+    cartLabel: string;
+    profileLabel: string;
+    moreLabel: string;
+    navLeft: Array<{
+      label: string;
+      category: string;
+      subItems?: string[];
+      type?: "mega";
+      columns?: Array<{
+        title: string;
+        image: string;
+        buttonText: string;
+        linkText: string;
+      }>;
+      education?: {
+        title: string;
+        items: Array<{
+          label: string;
+          icon: string;
+          color: string;
+        }>;
+      };
+    }>;
+    navRight: Array<{
+      label: string;
+      category: string;
+      subItems?: string[];
+    }>;
+  };
   hero: {
     badge: string;
     heading: string;

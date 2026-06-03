@@ -60,6 +60,40 @@ const collectionSchema = z.object({
 });
 
 const homepageSchema = z.object({
+  header: z.object({
+    logoText: z.string(),
+    searchPlaceholder: z.string(),
+    findStoreLabel: z.string(),
+    wishlistLabel: z.string(),
+    cartLabel: z.string(),
+    profileLabel: z.string(),
+    moreLabel: z.string(),
+    navLeft: z.array(z.object({
+      label: z.string(),
+      category: z.string(),
+      subItems: z.array(z.string()).optional(),
+      type: z.enum(["mega"]).optional(),
+      columns: z.array(z.object({
+        title: z.string(),
+        image: z.string(),
+        buttonText: z.string(),
+        linkText: z.string(),
+      })).optional(),
+      education: z.object({
+        title: z.string(),
+        items: z.array(z.object({
+          label: z.string(),
+          icon: z.string(),
+          color: z.string(),
+        })),
+      }).optional(),
+    })),
+    navRight: z.array(z.object({
+      label: z.string(),
+      category: z.string(),
+      subItems: z.array(z.string()).optional(),
+    })),
+  }),
   hero: z.object({
     badge: z.string(),
     heading: z.string(),
@@ -125,6 +159,16 @@ function AdminPage() {
   const { fields: promoFields, append: appendPromo, remove: removePromo } = useFieldArray({
     control: homepageForm.control,
     name: "promos",
+  });
+
+  const { fields: navLeftFields, append: appendNavLeft, remove: removeNavLeft } = useFieldArray({
+    control: homepageForm.control,
+    name: "header.navLeft",
+  });
+
+  const { fields: navRightFields, append: appendNavRight, remove: removeNavRight } = useFieldArray({
+    control: homepageForm.control,
+    name: "header.navRight",
   });
 
   const initMutation = useMutation({
@@ -243,6 +287,7 @@ function AdminPage() {
         <TabsList className="bg-secondary/50 p-1 rounded-none border border-border">
           <TabsTrigger value="overview" className="rounded-none px-8">Overview</TabsTrigger>
           <TabsTrigger value="homepage" className="rounded-none px-8">Homepage Editor</TabsTrigger>
+          <TabsTrigger value="header" className="rounded-none px-8">Header Editor</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-12">
@@ -289,6 +334,122 @@ function AdminPage() {
               </div>
             </section>
           </div>
+        </TabsContent>
+
+        <TabsContent value="header" className="space-y-8">
+          <Form {...homepageForm}>
+            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit)} className="space-y-12 pb-20">
+              <section className="space-y-6">
+                <div className="flex items-center gap-2">
+                  <Layout className="w-5 h-5 text-gold" />
+                  <h2 className="text-2xl font-serif">Header Identity & Actions</h2>
+                </div>
+                <Card>
+                  <CardContent className="pt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <FormField control={homepageForm.control} name="header.logoText" render={({ field }) => (
+                      <FormItem><FormLabel>Logo Text</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.searchPlaceholder" render={({ field }) => (
+                      <FormItem><FormLabel>Search Placeholder</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.findStoreLabel" render={({ field }) => (
+                      <FormItem><FormLabel>Find Store Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.wishlistLabel" render={({ field }) => (
+                      <FormItem><FormLabel>Wishlist Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.cartLabel" render={({ field }) => (
+                      <FormItem><FormLabel>Cart Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.profileLabel" render={({ field }) => (
+                      <FormItem><FormLabel>Profile Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={homepageForm.control} name="header.moreLabel" render={({ field }) => (
+                      <FormItem><FormLabel>More Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    )} />
+                  </CardContent>
+                </Card>
+              </section>
+
+              <Separator />
+
+              <section className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Layout className="w-5 h-5 text-gold" />
+                    <h2 className="text-2xl font-serif">Left Navigation</h2>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={() => appendNavLeft({ label: "New Item", category: "all", subItems: [] })}>
+                    + Add Item
+                  </Button>
+                </div>
+                <div className="grid gap-6">
+                  {navLeftFields.map((field, index) => (
+                    <Card key={field.id}>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Nav Item #{index + 1}</CardTitle>
+                        <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeNavLeft(index)}>×</Button>
+                      </CardHeader>
+                      <CardContent className="grid md:grid-cols-3 gap-4">
+                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.label`} render={({ field }) => (
+                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )} />
+                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.category`} render={({ field }) => (
+                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )} />
+                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.type`} render={({ field }) => (
+                          <FormItem><FormLabel>Type</FormLabel><FormControl><Input {...field} placeholder="mega or leave empty" /></FormControl></FormItem>
+                        )} />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+
+              <Separator />
+
+              <section className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Layout className="w-5 h-5 text-gold" />
+                    <h2 className="text-2xl font-serif">Right Navigation</h2>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={() => appendNavRight({ label: "New Item", category: "all", subItems: [] })}>
+                    + Add Item
+                  </Button>
+                </div>
+                <div className="grid gap-6">
+                  {navRightFields.map((field, index) => (
+                    <Card key={field.id}>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Nav Item #{index + 1}</CardTitle>
+                        <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeNavRight(index)}>×</Button>
+                      </CardHeader>
+                      <CardContent className="grid md:grid-cols-2 gap-4">
+                        <FormField control={homepageForm.control} name={`header.navRight.${index}.label`} render={({ field }) => (
+                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )} />
+                        <FormField control={homepageForm.control} name={`header.navRight.${index}.category`} render={({ field }) => (
+                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        )} />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+
+              <div className="fixed bottom-10 right-10 z-50">
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="rounded-full shadow-2xl bg-noir hover:bg-gold px-12 py-8 text-cream font-bold uppercase tracking-widest text-sm"
+                  disabled={updateConfigMutation.isPending}
+                >
+                  {updateConfigMutation.isPending ? "Saving Changes..." : "Save Header Config"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </TabsContent>
 
         <TabsContent value="homepage" className="space-y-8">

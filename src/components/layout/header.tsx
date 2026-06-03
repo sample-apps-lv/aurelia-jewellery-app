@@ -26,6 +26,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
+import { getHomepageConfig } from "@/lib/shopify";
 import p1 from "@/assets/p1.jpg";
 import p2 from "@/assets/p2.jpg";
 import p3 from "@/assets/p3.jpg";
@@ -33,7 +35,16 @@ import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
 import p6 from "@/assets/p6.jpg";
 
-const NAV_LEFT = [
+const ICON_MAP: Record<string, any> = {
+  Gem,
+  Award,
+  Zap,
+  Maximize,
+  Info,
+  Heart
+};
+
+const DEFAULT_NAV_LEFT = [
   { 
     label: "10+1 Monthly Plans", 
     category: "rings",
@@ -47,7 +58,7 @@ const NAV_LEFT = [
   { 
     label: "Rings", 
     category: "rings",
-    type: "mega",
+    type: "mega" as const,
     columns: [
       {
         title: "Engagement Rings",
@@ -71,10 +82,10 @@ const NAV_LEFT = [
     education: {
       title: "Jewellery Guide",
       items: [
-        { label: "Gold Guide", icon: Gem, color: "text-orange-400" },
-        { label: "Size Guide", icon: Maximize, color: "text-orange-400" },
-        { label: "Care Guide", icon: Info, color: "text-orange-400" },
-        { label: "Gifting Guide", icon: Heart, color: "text-orange-400" },
+        { label: "Gold Guide", icon: "Gem", color: "text-orange-400" },
+        { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
+        { label: "Care Guide", icon: "Info", color: "text-orange-400" },
+        { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
       ]
     }
   },
@@ -91,7 +102,7 @@ const NAV_LEFT = [
   { 
     label: "Solitaires", 
     category: "rings",
-    type: "mega",
+    type: "mega" as const,
     columns: [
       {
         title: "Solitaire Rings",
@@ -115,12 +126,12 @@ const NAV_LEFT = [
     education: {
       title: "Diamond Education",
       items: [
-        { label: "Cut", icon: Maximize, color: "text-orange-400" },
-        { label: "Clarity", icon: Zap, color: "text-orange-400" },
-        { label: "Tips & Tricks", icon: Info, color: "text-orange-400" },
-        { label: "Colour", icon: Gem, color: "text-orange-400" },
-        { label: "Carat", icon: Award, color: "text-orange-400" },
-        { label: "Certification", icon: Award, color: "text-orange-400" },
+        { label: "Cut", icon: "Maximize", color: "text-orange-400" },
+        { label: "Clarity", icon: "Zap", color: "text-orange-400" },
+        { label: "Tips & Tricks", icon: "Info", color: "text-orange-400" },
+        { label: "Colour", icon: "Gem", color: "text-orange-400" },
+        { label: "Carat", icon: "Award", color: "text-orange-400" },
+        { label: "Certification", icon: "Award", color: "text-orange-400" },
       ]
     }
   },
@@ -131,15 +142,30 @@ const NAV_LEFT = [
   },
 ];
 
-const NAV_RIGHT = [
+const DEFAULT_NAV_RIGHT = [
   { label: "Gifts", category: "rings", subItems: ["For Her", "For Him", "Under 10k"] },
   { label: "Gold Coins", category: "rings", subItems: ["1 Gram", "2 Gram", "5 Gram"] },
   { label: "Offers", category: "rings", subItems: ["Discount", "Cashback", "Seasonal"] },
 ];
 
 export function Header() {
+  const { data: config } = useQuery({
+    queryKey: ["homepage-config"],
+    queryFn: getHomepageConfig,
+  });
+
   const count = useCart((s) => s.count());
   const open = useCart((s) => s.open);
+
+  const navLeft = config?.header?.navLeft || DEFAULT_NAV_LEFT;
+  const navRight = config?.header?.navRight || DEFAULT_NAV_RIGHT;
+  const logoText = config?.header?.logoText || "GAJANAND";
+  const searchPlaceholder = config?.header?.searchPlaceholder || "Search for jewellery...";
+  const findStoreLabel = config?.header?.findStoreLabel || "Find a store";
+  const wishlistLabel = config?.header?.wishlistLabel || "Wishlist";
+  const cartLabel = config?.header?.cartLabel || "Cart";
+  const profileLabel = config?.header?.profileLabel || "Profile";
+  const moreLabel = config?.header?.moreLabel || "More";
 
   const ActionItem = ({ icon: Icon, label, onClick, to, badge }: any) => {
     const content = (
@@ -187,7 +213,7 @@ export function Header() {
             {item.type === "mega" ? (
               <div className="flex divide-x divide-slate-100">
                 <div className="grid grid-cols-3 flex-grow p-6 gap-8">
-                  {item.columns.map((col: any) => (
+                  {item.columns?.map((col: any) => (
                     <div key={col.title} className="flex flex-col items-center text-center">
                       <h4 className="text-[#001938] font-serif text-lg mb-4 self-start border-b border-slate-100 w-full text-left pb-2">{col.title}</h4>
                       <div className="relative aspect-square w-full mb-4 group/img">
@@ -207,20 +233,23 @@ export function Header() {
                   <div className="w-64 p-6 bg-white">
                     <h4 className="text-[#001938] font-serif text-lg mb-6 border-b border-slate-100 pb-2">{item.education.title}</h4>
                     <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                      {item.education.items.map((edu: any) => (
-                        <div key={edu.label} className="flex items-center gap-3 group/edu cursor-pointer">
-                          <div className={cn("p-2 rounded-full bg-orange-50 transition-colors group-hover/edu:bg-orange-100", edu.color)}>
-                            <edu.icon className="w-4 h-4" />
+                      {item.education.items.map((edu: any) => {
+                        const Icon = ICON_MAP[edu.icon] || Info;
+                        return (
+                          <div key={edu.label} className="flex items-center gap-3 group/edu cursor-pointer">
+                            <div className={cn("p-2 rounded-full bg-orange-50 transition-colors group-hover/edu:bg-orange-100", edu.color)}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="text-[11px] font-medium text-slate-600 group-hover/edu:text-primary transition-colors">{edu.label}</span>
                           </div>
-                          <span className="text-[11px] font-medium text-slate-600 group-hover/edu:text-primary transition-colors">{edu.label}</span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              item.subItems.map((sub: string) => (
+              item.subItems?.map((sub: string) => (
                 <DropdownMenuItem key={sub} asChild>
                   <Link
                     to="/catalog/$category"
@@ -249,7 +278,7 @@ export function Header() {
               <span className="font-serif font-bold text-xl leading-none">GS</span>
             </div>
             <span className="font-serif text-xl md:text-2xl tracking-[0.1em] text-[#1e2d48] font-bold uppercase">
-              GAJANAND
+              {logoText}
             </span>
           </Link>
 
@@ -257,7 +286,7 @@ export function Header() {
           <div className="flex-grow max-w-[600px] relative">
             <Input 
               type="text" 
-              placeholder="Search for jewellery..." 
+              placeholder={searchPlaceholder}
               className="w-full bg-white border-[#b0b0b0] rounded-[4px] pl-10 h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -265,11 +294,11 @@ export function Header() {
 
           {/* Action Icons */}
           <div className="flex items-center">
-            <ActionItem icon={MapPin} label="Find a store" to="/account" />
-            <ActionItem icon={Heart} label="Wishlist" to="/account" />
-            <ActionItem icon={ShoppingBag} label="Cart" onClick={open} badge={count} />
-            <ActionItem icon={User} label="Profile" to="/account" />
-            <ActionItem icon={MoreVertical} label="More" />
+            <ActionItem icon={MapPin} label={findStoreLabel} to="/account" />
+            <ActionItem icon={Heart} label={wishlistLabel} to="/account" />
+            <ActionItem icon={ShoppingBag} label={cartLabel} onClick={open} badge={count} />
+            <ActionItem icon={User} label={profileLabel} to="/account" />
+            <ActionItem icon={MoreVertical} label={moreLabel} />
           </div>
         </div>
       </div>
@@ -278,12 +307,12 @@ export function Header() {
       <div className="bg-[#001938] text-white border-t border-white/10">
         <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between min-h-[44px]">
           <div className="flex items-center gap-4">
-            {NAV_LEFT.map((n) => (
+            {navLeft.map((n: any) => (
               <NavItem key={n.label} item={n} />
             ))}
           </div>
           <div className="flex items-center gap-4">
-            {NAV_RIGHT.map((n) => (
+            {navRight.map((n: any) => (
               <NavItem key={n.label} item={n} />
             ))}
           </div>

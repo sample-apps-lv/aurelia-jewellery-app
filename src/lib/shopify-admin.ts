@@ -5,11 +5,122 @@ const domain = import.meta.env.VITE_SHOPIFY_SHOP_DOMAIN;
 const adminAccessToken = import.meta.env.VITE_SHOPIFY_ADMIN_ACCESS_TOKEN;
 
 const INITIAL_HOME_DATA: HomepageConfig = {
+  header: {
+    logoText: "GAJANAND",
+    searchPlaceholder: "Search for jewellery...",
+    findStoreLabel: "Find a store",
+    wishlistLabel: "Wishlist",
+    cartLabel: "Cart",
+    profileLabel: "Profile",
+    moreLabel: "More",
+    navLeft: [
+      { 
+        label: "10+1 Monthly Plans", 
+        category: "rings",
+        subItems: ["Gold Mine", "Gold Reserve", "Flexi Gold"]
+      },
+      { 
+        label: "Watch Jewellery", 
+        category: "earrings",
+        subItems: ["Men's Watches", "Women's Watches", "Smart Watch Straps"]
+      },
+      { 
+        label: "Rings", 
+        category: "rings",
+        type: "mega",
+        columns: [
+          {
+            title: "Engagement Rings",
+            image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80",
+            buttonText: "Design your Engagement Ring",
+            linkText: "View All Engagement Rings",
+          },
+          {
+            title: "Wedding Rings",
+            image: "https://images.unsplash.com/photo-1544450298-6c8961a45442?auto=format&fit=crop&q=80",
+            buttonText: "Personalize your Band",
+            linkText: "View All Wedding Rings",
+          },
+          {
+            title: "Daily Wear Rings",
+            image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&q=80",
+            buttonText: "Shop Everyday Style",
+            linkText: "View All Casual Rings",
+          },
+        ],
+        education: {
+          title: "Jewellery Guide",
+          items: [
+            { label: "Gold Guide", icon: "Gem", color: "text-orange-400" },
+            { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
+            { label: "Care Guide", icon: "Info", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+          ]
+        }
+      },
+      { 
+        label: "Earrings", 
+        category: "earrings",
+        subItems: ["Studs", "Hoops", "Drops", "Jhumkas"]
+      },
+      { 
+        label: "Pendants", 
+        category: "necklaces",
+        subItems: ["Heart", "Religious", "Alphabet", "Diamond"]
+      },
+      { 
+        label: "Solitaires", 
+        category: "rings",
+        type: "mega",
+        columns: [
+          {
+            title: "Solitaire Rings",
+            image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80",
+            buttonText: "Make your own Solitaire Ring",
+            linkText: "View All Preset Solitaire Rings",
+          },
+          {
+            title: "Solitaire Pendants",
+            image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80",
+            buttonText: "Make your own Solitaire Pendant",
+            linkText: "View All Preset Solitaire Pendants",
+          },
+          {
+            title: "Solitaire Earrings",
+            image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80",
+            buttonText: "Make your own Solitaire Earring",
+            linkText: "View All Preset Solitaire Earrings",
+          },
+        ],
+        education: {
+          title: "Diamond Education",
+          items: [
+            { label: "Cut", icon: "Maximize", color: "text-orange-400" },
+            { label: "Clarity", icon: "Zap", color: "text-orange-400" },
+            { label: "Tips & Tricks", icon: "Info", color: "text-orange-400" },
+            { label: "Colour", icon: "Gem", color: "text-orange-400" },
+            { label: "Carat", icon: "Award", color: "text-orange-400" },
+            { label: "Certification", icon: "Award", color: "text-orange-400" },
+          ]
+        }
+      },
+      { 
+        label: "All Jewellery", 
+        category: "rings",
+        subItems: ["Gold", "Diamond", "Platinum", "Silver"]
+      },
+    ],
+    navRight: [
+      { label: "Gifts", category: "rings", subItems: ["For Her", "For Him", "Under 10k"] },
+      { label: "Gold Coins", category: "rings", subItems: ["1 Gram", "2 Gram", "5 Gram"] },
+      { label: "Offers", category: "rings", subItems: ["Discount", "Cashback", "Seasonal"] },
+    ],
+  },
   hero: {
     badge: "EXCLUSIVE COLLECTION",
     heading: "Crafting Eternal Memories",
     subheading: "Discover our masterfully handcrafted diamond and gold jewellery, where every piece tells a story of timeless beauty.",
-    videoUrl: "", // We can use the assets URL here if we know it, or leave empty for now
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/199ae50814794d96bb94a6c22f9afea5.webm",
     ctaPrimaryText: "Explore Collection",
     ctaPrimaryLink: "/catalog/rings",
   },
