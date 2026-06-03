@@ -45,6 +45,76 @@ export type ShopifyProduct = {
   } | null;
 };
 
+export interface HomepageConfig {
+  hero: {
+    badge: string;
+    heading: string;
+    subheading: string;
+    videoUrl: string;
+    ctaPrimaryText: string;
+    ctaPrimaryLink: string;
+    ctaSecondaryText: string;
+    ctaSecondaryLink: string;
+  };
+  promos: Array<{
+    id: number;
+    image: string;
+    title: string;
+    subtitle: string;
+    cta: string;
+    bgColor: string;
+  }>;
+  enrollPlan: {
+    title: string;
+    highlight: string;
+    description: string;
+    ctaText: string;
+  };
+  promises: Array<{
+    title: string;
+    desc: string;
+    icon: string;
+  }>;
+}
+
+export async function getHomepageConfig(): Promise<HomepageConfig | null> {
+  const query = `
+    query getHomepageConfig {
+      metaobjects(type: "homepage_settings", first: 1) {
+        nodes {
+          handle
+          fields {
+            key
+            value
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await shopifyFetch<{ metaobjects: { nodes: any[] } }>({ query });
+    console.log("Storefront API metaobjects response:", JSON.stringify(response.data?.metaobjects, null, 2));
+    const node = response.data?.metaobjects?.nodes[0];
+    
+    if (!node) {
+      console.warn("No homepage_settings metaobject found via Storefront API.");
+      return null;
+    }
+
+    const configField = node.fields.find((f: any) => f.key === "config");
+    if (!configField) {
+      console.warn("No 'config' field found in metaobject node.");
+      return null;
+    }
+
+    return JSON.parse(configField.value);
+  } catch (error) {
+    console.error("Error fetching homepage config:", error);
+    return null;
+  }
+}
+
 export async function getCollectionProducts(collectionId: string): Promise<ShopifyProduct[]> {
   const query = `
     query getCollectionProducts($id: ID!) {
@@ -70,4 +140,56 @@ export async function getCollectionProducts(collectionId: string): Promise<Shopi
   });
 
   return response.data?.collection?.products?.nodes || [];
+}
+
+export async function getAllProducts() {
+  const query = `
+    query getAllProducts {
+      products(first: 50) {
+        nodes {
+          id
+          title
+          handle
+          description
+          productType
+          vendor
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 5) {
+            nodes {
+              url
+              altText
+            }
+          }
+          collections(first: 1) {
+            nodes {
+              title
+              handle
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch<{ products: { nodes: any[] } }>({ query });
+  const nodes = response.data?.products?.nodes || [];
+
+  return nodes.map((node) => ({
+    id: node.id,
+    title: node.title,
+    slug: node.handle,
+    description: node.description,
+    price: parseFloat(node.priceRange.minVariantPrice.amount),
+    images: node.images.nodes.map((img: any) => img.url),
+    category: node.collections.nodes[0]?.title || node.productType || "Jewellery",
+    stock: 10, // Mock stock as it's not in Storefront API
+    isBestseller: node.collections.nodes.some((c: any) => c.handle === "bestsellers") || false,
+    rating: 4.8,
+    reviews: 24,
+  }));
 }

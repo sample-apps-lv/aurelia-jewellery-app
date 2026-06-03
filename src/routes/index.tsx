@@ -7,19 +7,20 @@ import {
   ChevronRight,
   Video,
   MapPin,
-  Smartphone
+  Smartphone,
+  LucideIcon
 } from "lucide-react";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { ProductCard } from "@/features/catalog/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import heroVideo from "@/assets/hero.webm";
+import heroVideoFallback from "@/assets/hero.webm";
 import { CategoryGrid } from "@/components/sections/category-grid";
 import { PromoCarousel } from "@/components/sections/promo-carousel";
 import { EnrollPlanSection } from "@/components/sections/enroll-plan-section";
 import { CollectionsSection } from "@/components/sections/collections-section";
 import { useQuery } from "@tanstack/react-query";
-import { getCollectionProducts } from "@/lib/shopify";
+import { getCollectionProducts, getHomepageConfig } from "@/lib/shopify";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,7 +34,17 @@ export const Route = createFileRoute("/")({
 
 const CATEGORY_COLLECTION_ID = "337363632317";
 
-const PRICE_POINTS = [
+const ICON_MAP: Record<string, LucideIcon> = {
+  ShieldCheck,
+  RefreshCw,
+  Truck,
+  Star,
+  Video,
+  MapPin,
+  Smartphone
+};
+
+const DEFAULT_PRICE_POINTS = [
   { label: "Under 10k", to: "/catalog/rings" },
   { label: "10k - 20k", to: "/catalog/rings" },
   { label: "20k - 30k", to: "/catalog/rings" },
@@ -41,14 +52,12 @@ const PRICE_POINTS = [
   { label: "Above 50k", to: "/catalog/rings" },
 ];
 
-const PROMISES = [
-  { icon: ShieldCheck, title: "100% Certified", desc: "Authenticity Guaranteed" },
-  { icon: RefreshCw, title: "Lifetime Exchange", desc: "Buy-back Policy" },
-  { icon: Truck, title: "Free Shipping", desc: "Insured Delivery" },
-  { icon: Star, title: "30-Day Returns", desc: "Money Back Guarantee" },
-];
-
 function Index() {
+  const { data: config } = useQuery({
+    queryKey: ["homepage-config"],
+    queryFn: getHomepageConfig,
+  });
+
   const { data: categoryItems = [] } = useQuery({
     queryKey: ["category-collection-products", CATEGORY_COLLECTION_ID],
     queryFn: () => getCollectionProducts(CATEGORY_COLLECTION_ID),
@@ -56,6 +65,11 @@ function Index() {
   
   const { data: products = [] } = useProducts();
   const bestsellers = products.filter((p) => p.isBestseller);
+
+  const hero = config?.hero;
+  const promos = config?.promos || [];
+  const enrollPlan = config?.enrollPlan;
+  const promises = config?.promises || [];
 
   return (
     <div className="bg-white">
@@ -66,9 +80,10 @@ function Index() {
           muted 
           loop 
           playsInline 
+          key={hero?.videoUrl}
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src={heroVideo} type="video/webm" />
+          <source src={hero?.videoUrl || heroVideoFallback} type="video/webm" />
         </video>
         <div className="absolute inset-0 bg-black/30" />
         {/* Bottom Fade */}
@@ -76,20 +91,20 @@ function Index() {
         <div className="absolute inset-0 flex items-center px-6 lg:px-20">
           <div className="max-w-xl text-white">
             <Badge className="mb-4 bg-gold text-white hover:bg-gold-light border-none rounded-none px-4 py-1 text-[10px] font-bold tracking-widest">
-              EXCLUSIVE COLLECTION
+              {hero?.badge || "EXCLUSIVE COLLECTION"}
             </Badge>
             <h2 className="text-4xl md:text-7xl font-serif mb-6 leading-tight">
-              Crafting <br /> <span className="text-gold-light italic">Eternal</span> Memories
+              {hero?.heading?.split(" ")[0]} <br /> <span className="text-gold-light italic">{hero?.heading?.split(" ").slice(1).join(" ")}</span>
             </h2>
             <p className="text-lg mb-8 text-white/90 hidden md:block font-light tracking-wide max-w-md">
-              Discover our masterfully handcrafted diamond and gold jewellery, where every piece tells a story of timeless beauty.
+              {hero?.subheading}
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
-                Explore Collection
+              <Button asChild size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
+                <Link to={hero?.ctaPrimaryLink as any || "/catalog/rings"}>{hero?.ctaPrimaryText || "Explore Collection"}</Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
-                Book Video Call
+              <Button asChild size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-black rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold backdrop-blur-sm">
+                <Link to={hero?.ctaSecondaryLink as any || "#"}>{hero?.ctaSecondaryText || "Book Video Call"}</Link>
               </Button>
             </div>
           </div>
@@ -100,10 +115,10 @@ function Index() {
       <CategoryGrid items={categoryItems} />
 
       {/* Promo Carousel Section */}
-      <PromoCarousel />
+      <PromoCarousel items={promos} />
 
       {/* Enroll Plan Section */}
-      <EnrollPlanSection />
+      {enrollPlan && <EnrollPlanSection data={enrollPlan} />}
 
       {/* Collections Section */}
       <CollectionsSection />
@@ -140,10 +155,10 @@ function Index() {
             <div className="w-20 h-1 bg-gold mx-auto" />
           </div>
           <div className="flex flex-wrap justify-center gap-4">
-            {PRICE_POINTS.map((price) => (
+            {DEFAULT_PRICE_POINTS.map((price) => (
               <Link
                 key={price.label}
-                to={price.to}
+                to={price.to as any}
                 className="px-8 py-3 bg-white border border-border hover:border-gold hover:text-gold transition-all text-sm font-medium"
               >
                 {price.label}
@@ -176,21 +191,26 @@ function Index() {
       </section>
 
       {/* The BlueStone Promise (Icon Grid) */}
-      <section className="py-20 bg-secondary/20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-            {PROMISES.map((promise) => (
-              <div key={promise.title} className="text-center flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 text-gold shadow-sm">
-                  <promise.icon className="w-8 h-8" />
-                </div>
-                <h4 className="font-medium text-lg mb-2">{promise.title}</h4>
-                <p className="text-sm text-muted-foreground">{promise.desc}</p>
-              </div>
-            ))}
+      {promises.length > 0 && (
+        <section className="py-20 bg-secondary/20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+              {promises.map((promise) => {
+                const Icon = ICON_MAP[promise.icon] || Star;
+                return (
+                  <div key={promise.title} className="text-center flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 text-gold shadow-sm">
+                      <Icon className="w-8 h-8" />
+                    </div>
+                    <h4 className="font-medium text-lg mb-2">{promise.title}</h4>
+                    <p className="text-sm text-muted-foreground">{promise.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Social Proof */}
       <section className="py-24 overflow-hidden">
@@ -203,7 +223,7 @@ function Index() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="aspect-square bg-muted relative group overflow-hidden">
                 <img 
-                  src={heroVideo} 
+                  src={hero?.videoUrl || heroVideoFallback} 
                   alt="Social Post" 
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
                 />
@@ -218,3 +238,4 @@ function Index() {
     </div>
   );
 }
+

@@ -3,57 +3,25 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import hero from "@/assets/hero.jpg"; // Placeholder
-import catBridal from "@/assets/cat-bridal.jpg"; // Placeholder
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const PROMOS = [
-  {
-    id: 1,
-    image: hero,
-    title: "Old is the new gold?",
-    subtitle: "BIG GOLD UPGRADE",
-    cta: "TRY NOW",
-    bgColor: "bg-gradient-to-r from-[#e5e7eb] to-[#1e3a8a]"
-  },
-  {
-    id: 2,
-    image: catBridal,
-    title: "Vows in Light",
-    subtitle: "THE BRIDAL COLLECTION",
-    cta: "EXPLORE",
-    bgColor: "bg-gradient-to-r from-[#fdf2f8] to-[#9d174d]"
-  },
-  {
-    id: 3,
-    image: hero,
-    title: "New Arrivals",
-    subtitle: "SEASONAL PICKS",
-    cta: "SHOP NOW",
-    bgColor: "bg-gradient-to-r from-[#fef3c7] to-[#d97706]"
-  },
-  {
-    id: 4,
-    image: catBridal,
-    title: "Diamond Offers",
-    subtitle: "SPARKLE MORE",
-    cta: "VIEW ALL",
-    bgColor: "bg-gradient-to-r from-[#ecfeff] to-[#0891b2]"
-  }
-];
+interface PromoCarouselProps {
+  items: Array<{
+    id: number;
+    image: string;
+    title: string;
+    subtitle: string;
+    cta: string;
+    bgColor: string;
+  }>;
+}
 
-import { 
-  ChevronLeft, 
-  ChevronRight 
-} from "lucide-react";
-
-export function PromoCarousel() {
+export function PromoCarousel({ items }: PromoCarouselProps) {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
@@ -80,6 +48,8 @@ export function PromoCarousel() {
     });
   }, [api]);
 
+  if (!items || items.length === 0) return null;
+
   return (
     <section className="py-8 px-4 md:px-6">
       <div className="max-w-[1440px] mx-auto relative group">
@@ -90,7 +60,7 @@ export function PromoCarousel() {
           className="w-full"
         >
           <CarouselContent>
-            {PROMOS.map((promo) => (
+            {items.map((promo) => (
               <CarouselItem key={promo.id}>
                 <div className={`relative h-[300px] md:h-[450px] w-full overflow-hidden rounded-xl ${promo.bgColor}`}>
                   <img 
@@ -120,7 +90,6 @@ export function PromoCarousel() {
             ))}
           </CarouselContent>
           
-          {/* Custom Navigation Buttons */}
           <button 
             onClick={() => api?.scrollPrev()}
             className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 z-20"
@@ -137,7 +106,6 @@ export function PromoCarousel() {
           </button>
         </Carousel>
 
-        {/* Custom Dots */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
           {Array.from({ length: count }).map((_, i) => (
             <button
@@ -155,3 +123,4 @@ export function PromoCarousel() {
     </section>
   );
 }
+
