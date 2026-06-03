@@ -23,14 +23,21 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Star
 };
 
+const DEFAULT_PROMISES: Promise[] = [
+  { title: "100% Certified", desc: "Authenticity Guaranteed", icon: "ShieldCheck" },
+  { title: "Lifetime Exchange", desc: "Buy-back Policy", icon: "RefreshCw" },
+  { title: "Free Shipping", desc: "Insured Delivery", icon: "Truck" },
+  { title: "30-Day Returns", desc: "Money Back Guarantee", icon: "Star" }
+];
+
 export function PromisesSection({ promises }: PromisesSectionProps) {
-  if (promises.length === 0) return null;
+  const displayPromises = promises.length > 0 ? promises : DEFAULT_PROMISES;
 
   return (
     <section className="py-20 bg-secondary/20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-          {promises.map((promise) => {
+          {displayPromises.map((promise) => {
             const Icon = ICON_MAP[promise.icon] || Star;
             return (
               <div key={promise.title} className="text-center flex flex-col items-center">
