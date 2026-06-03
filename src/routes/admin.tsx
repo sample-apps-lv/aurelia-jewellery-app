@@ -61,26 +61,29 @@ const collectionSchema = z.object({
 
 const homepageSchema = z.object({
   header: z.object({
-    logoText: z.string(),
-    searchPlaceholder: z.string(),
-    findStoreLabel: z.string(),
-    wishlistLabel: z.string(),
-    cartLabel: z.string(),
-    profileLabel: z.string(),
-    moreLabel: z.string(),
+    logoText: z.string().min(1, "Required"),
+    searchPlaceholder: z.string().min(1, "Required"),
+    findStoreLabel: z.string().min(1, "Required"),
+    wishlistLabel: z.string().min(1, "Required"),
+    cartLabel: z.string().min(1, "Required"),
+    profileLabel: z.string().min(1, "Required"),
+    moreLabel: z.string().min(1, "Required"),
     navLeft: z.array(z.object({
-      label: z.string(),
-      category: z.string(),
-      subItems: z.array(z.string()).optional(),
+      label: z.string().min(1, "Required"),
+      category: z.string().min(1, "Required"),
+      subItems: z.array(z.object({
+        label: z.string().min(1, "Required"),
+        url: z.string().min(1, "Required"),
+      })).optional(),
       type: z.enum(["mega"]).optional(),
       columns: z.array(z.object({
-        title: z.string(),
-        image: z.string(),
-        buttonText: z.string(),
-        linkText: z.string(),
+        title: z.string().min(1, "Required"),
+        image: z.string().min(1, "Required"),
+        buttonText: z.string().min(1, "Required"),
+        linkText: z.string().min(1, "Required"),
       })).optional(),
       education: z.object({
-        title: z.string(),
+        title: z.string().min(1, "Required"),
         items: z.array(z.object({
           label: z.string(),
           icon: z.string(),
@@ -89,32 +92,35 @@ const homepageSchema = z.object({
       }).optional(),
     })),
     navRight: z.array(z.object({
-      label: z.string(),
-      category: z.string(),
-      subItems: z.array(z.string()).optional(),
+      label: z.string().min(1, "Required"),
+      category: z.string().min(1, "Required"),
+      subItems: z.array(z.object({
+        label: z.string().min(1, "Required"),
+        url: z.string().min(1, "Required"),
+      })).optional(),
     })),
   }),
   hero: z.object({
-    badge: z.string(),
-    heading: z.string(),
-    subheading: z.string(),
-    videoUrl: z.string(),
-    ctaPrimaryText: z.string(),
-    ctaPrimaryLink: z.string(),
+    badge: z.string().min(1, "Required"),
+    heading: z.string().min(1, "Required"),
+    subheading: z.string().min(1, "Required"),
+    videoUrl: z.string().min(1, "Required"),
+    ctaPrimaryText: z.string().min(1, "Required"),
+    ctaPrimaryLink: z.string().min(1, "Required"),
   }),
   promos: z.array(z.object({
     id: z.number(),
-    image: z.string(),
-    title: z.string(),
-    subtitle: z.string(),
-    cta: z.string(),
-    bgColor: z.string(),
+    image: z.string().min(1, "Required"),
+    title: z.string().min(1, "Required"),
+    subtitle: z.string().optional(),
+    cta: z.string().min(1, "Required"),
+    bgColor: z.string().min(1, "Required"),
   })),
   enrollPlan: z.object({
-    title: z.string(),
-    highlight: z.string(),
-    description: z.string(),
-    ctaText: z.string(),
+    title: z.string().min(1, "Required"),
+    highlight: z.string().min(1, "Required"),
+    description: z.string().min(1, "Required"),
+    ctaText: z.string().min(1, "Required"),
   }),
 });
 
@@ -193,6 +199,11 @@ function AdminPage() {
     updateConfigMutation.mutate({ data: values as any });
   }
 
+  function onHomepageError(errors: any) {
+    console.error("Homepage form errors:", errors);
+    toast.error("Please fix the errors in the form before saving.");
+  }
+
   const createProductMutation = useMutation({
     mutationFn: createProductFn,
     onSuccess: (data) => {
@@ -223,6 +234,35 @@ function AdminPage() {
   const totalSales = dashboardData?.totalSales || 0;
   const totalOrders = dashboardData?.totalOrders || 0;
   const totalCustomers = dashboardData?.totalCustomers || 0;
+
+  const SubItemsEditor = ({ parentIndex, name }: { parentIndex: number, name: "header.navLeft" | "header.navRight" }) => {
+    const { fields, append, remove } = useFieldArray({
+      control: homepageForm.control,
+      name: `${name}.${parentIndex}.subItems` as any,
+    });
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] uppercase font-bold text-muted-foreground">Sub-items</p>
+          <Button type="button" variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => append({ label: "", url: "" })}>+ Add Sub-item</Button>
+        </div>
+        <div className="grid gap-2">
+          {fields.map((sub, subIdx) => (
+            <div key={sub.id} className="flex gap-2 items-start">
+              <FormField control={homepageForm.control} name={`${name}.${parentIndex}.subItems.${subIdx}.label` as any} render={({ field }) => (
+                <FormItem className="flex-1"><FormControl><Input {...field} placeholder="Label" className="h-8 text-xs" /></FormControl><FormMessage /></FormItem>
+              )} />
+              <FormField control={homepageForm.control} name={`${name}.${parentIndex}.subItems.${subIdx}.url` as any} render={({ field }) => (
+                <FormItem className="flex-1"><FormControl><Input {...field} placeholder="URL" className="h-8 text-xs" /></FormControl><FormMessage /></FormItem>
+              )} />
+              <Button variant="ghost" size="sm" className="h-8 w-8 text-destructive" onClick={() => remove(subIdx)}>×</Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="pt-32 pb-20 px-6 lg:px-10 max-w-7xl mx-auto">
@@ -270,10 +310,10 @@ function AdminPage() {
               <Form {...productForm}>
                 <form onSubmit={productForm.handleSubmit((v) => createProductMutation.mutate({ data: v }))} className="space-y-4 pt-4">
                   <FormField control={productForm.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                    <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={productForm.control} name="price" render={({ field }) => (
-                    <FormItem><FormLabel>Price (INR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    <FormItem><FormLabel>Price (INR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full bg-gold" disabled={createProductMutation.isPending}>Create Product</Button>
                 </form>
@@ -338,7 +378,7 @@ function AdminPage() {
 
         <TabsContent value="header" className="space-y-8">
           <Form {...homepageForm}>
-            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit)} className="space-y-12 pb-20">
+            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit, onHomepageError)} className="space-y-12 pb-20">
               <section className="space-y-6">
                 <div className="flex items-center gap-2">
                   <Layout className="w-5 h-5 text-gold" />
@@ -347,25 +387,25 @@ function AdminPage() {
                 <Card>
                   <CardContent className="pt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <FormField control={homepageForm.control} name="header.logoText" render={({ field }) => (
-                      <FormItem><FormLabel>Logo Text</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Logo Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.searchPlaceholder" render={({ field }) => (
-                      <FormItem><FormLabel>Search Placeholder</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Search Placeholder</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.findStoreLabel" render={({ field }) => (
-                      <FormItem><FormLabel>Find Store Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Find Store Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.wishlistLabel" render={({ field }) => (
-                      <FormItem><FormLabel>Wishlist Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Wishlist Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.cartLabel" render={({ field }) => (
-                      <FormItem><FormLabel>Cart Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Cart Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.profileLabel" render={({ field }) => (
-                      <FormItem><FormLabel>Profile Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Profile Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={homepageForm.control} name="header.moreLabel" render={({ field }) => (
-                      <FormItem><FormLabel>More Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>More Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </CardContent>
                 </Card>
@@ -392,15 +432,89 @@ function AdminPage() {
                       </CardHeader>
                       <CardContent className="grid md:grid-cols-3 gap-4">
                         <FormField control={homepageForm.control} name={`header.navLeft.${index}.label`} render={({ field }) => (
-                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={homepageForm.control} name={`header.navLeft.${index}.category`} render={({ field }) => (
-                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={homepageForm.control} name={`header.navLeft.${index}.type`} render={({ field }) => (
-                          <FormItem><FormLabel>Type</FormLabel><FormControl><Input {...field} placeholder="mega or leave empty" /></FormControl></FormItem>
+                          <FormItem><FormLabel>Type</FormLabel><FormControl><Input {...field} placeholder="mega or leave empty" /></FormControl><FormMessage /></FormItem>
                         )} />
                       </CardContent>
+                      {homepageForm.watch(`header.navLeft.${index}.type`) === "mega" && (
+                        <CardContent className="border-t pt-4 space-y-6">
+                          <div className="space-y-4">
+                            <p className="text-xs uppercase tracking-widest text-gold font-bold">Mega Menu Columns</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              {[0, 1, 2].map((colIdx) => (
+                                <div key={colIdx} className="space-y-2 p-3 border border-border rounded-sm">
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Column {colIdx + 1}</p>
+                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.title`} render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl><Input {...field} placeholder="Title" className="h-8 text-xs" /></FormControl><FormMessage />
+                                    </FormItem>
+                                  )} />
+                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.image`} render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl><Input {...field} placeholder="Image URL" className="h-8 text-xs" /></FormControl><FormMessage />
+                                    </FormItem>
+                                  )} />
+                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.buttonText`} render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl><Input {...field} placeholder="Button Text" className="h-8 text-xs" /></FormControl><FormMessage />
+                                    </FormItem>
+                                  )} />
+                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.linkText`} render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl><Input {...field} placeholder="Link Text" className="h-8 text-xs" /></FormControl><FormMessage />
+                                    </FormItem>
+                                  )} />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <p className="text-xs uppercase tracking-widest text-gold font-bold">Education Guide</p>
+                            <Card className="bg-secondary/20 border-none rounded-none">
+                              <CardContent className="pt-4 space-y-4">
+                                <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.title`} render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl><Input {...field} placeholder="Guide Title (e.g. Diamond Education)" className="h-8 text-xs font-bold" /></FormControl><FormMessage />
+                                  </FormItem>
+                                )} />
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+                                  {[0, 1, 2, 3, 4, 5].map((eduIdx) => (
+                                    <div key={eduIdx} className="space-y-1">
+                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.label`} render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl><Input {...field} placeholder="Label" className="h-7 text-[10px]" /></FormControl><FormMessage />
+                                        </FormItem>
+                                      )} />
+                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.icon`} render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl><Input {...field} placeholder="Icon" className="h-7 text-[10px]" /></FormControl><FormMessage />
+                                        </FormItem>
+                                      )} />
+                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.color`} render={({ field }) => (
+                                        <FormItem>
+                                          <FormControl><Input {...field} placeholder="Color" className="h-7 text-[10px]" /></FormControl><FormMessage />
+                                        </FormItem>
+                                      )} />
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </CardContent>
+                      )}
+                      
+                      {!homepageForm.watch(`header.navLeft.${index}.type`) && (
+                        <CardContent className="border-t pt-4">
+                          <SubItemsEditor parentIndex={index} name="header.navLeft" />
+                        </CardContent>
+                      )}
                     </Card>
                   ))}
                 </div>
@@ -427,11 +541,14 @@ function AdminPage() {
                       </CardHeader>
                       <CardContent className="grid md:grid-cols-2 gap-4">
                         <FormField control={homepageForm.control} name={`header.navRight.${index}.label`} render={({ field }) => (
-                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={homepageForm.control} name={`header.navRight.${index}.category`} render={({ field }) => (
-                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
+                      </CardContent>
+                      <CardContent className="border-t pt-4">
+                        <SubItemsEditor parentIndex={index} name="header.navRight" />
                       </CardContent>
                     </Card>
                   ))}
@@ -464,7 +581,7 @@ function AdminPage() {
 
           {config && (
             <Form {...homepageForm}>
-              <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit)} className="space-y-12 pb-20">
+              <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit, onHomepageError)} className="space-y-12 pb-20">
                 <section className="space-y-6">
                   <div className="flex items-center gap-2">
                     <Layout className="w-5 h-5 text-gold" />
@@ -473,27 +590,28 @@ function AdminPage() {
                   <Card>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
                       <FormField control={homepageForm.control} name="hero.badge" render={({ field }) => (
-                        <FormItem><FormLabel>Badge Text</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        <FormItem><FormLabel>Badge Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={homepageForm.control} name="hero.heading" render={({ field }) => (
-                        <FormItem><FormLabel>Heading</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        <FormItem><FormLabel>Heading</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={homepageForm.control} name="hero.subheading" render={({ field }) => (
-                        <FormItem className="md:col-span-2"><FormLabel>Subheading</FormLabel><FormControl><Textarea {...field} /></FormControl></FormItem>
+                        <FormItem className="md:col-span-2"><FormLabel>Subheading</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={homepageForm.control} name="hero.videoUrl" render={({ field }) => (
                         <FormItem className="md:col-span-2">
                           <FormLabel>Hero Video</FormLabel>
                           <VideoUploader value={field.value} onChange={field.onChange} />
+                          <FormMessage />
                           <FormDescription>Upload a .webm, .mp4, or .mov file (max 1GB) or enter a URL.</FormDescription>
                         </FormItem>
                       )} />
                       <div className="grid grid-cols-2 gap-4 md:col-span-2">
                         <FormField control={homepageForm.control} name="hero.ctaPrimaryText" render={({ field }) => (
-                          <FormItem><FormLabel>Primary CTA Text</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Primary CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={homepageForm.control} name="hero.ctaPrimaryLink" render={({ field }) => (
-                          <FormItem><FormLabel>Primary CTA Link</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                          <FormItem><FormLabel>Primary CTA Link</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                       </div>
                     </CardContent>
@@ -521,11 +639,19 @@ function AdminPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <FormField control={homepageForm.control} name={`promos.${index}.title`} render={({ field }) => (
-                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                           <FormField control={homepageForm.control} name={`promos.${index}.image`} render={({ field }) => (
-                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField control={homepageForm.control} name={`promos.${index}.cta`} render={({ field }) => (
+                              <FormItem><FormLabel>CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={homepageForm.control} name={`promos.${index}.bgColor`} render={({ field }) => (
+                              <FormItem><FormLabel>Background Color</FormLabel><FormControl><Input {...field} placeholder="e.g. bg-slate-100" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
@@ -542,10 +668,16 @@ function AdminPage() {
                   <Card>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
                       <FormField control={homepageForm.control} name="enrollPlan.title" render={({ field }) => (
-                        <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={homepageForm.control} name="enrollPlan.highlight" render={({ field }) => (
-                        <FormItem><FormLabel>Highlight Text (10+1)</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        <FormItem><FormLabel>Highlight Text (10+1)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={homepageForm.control} name="enrollPlan.description" render={({ field }) => (
+                        <FormItem className="md:col-span-2"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={homepageForm.control} name="enrollPlan.ctaText" render={({ field }) => (
+                        <FormItem><FormLabel>CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                     </CardContent>
                   </Card>
@@ -579,5 +711,3 @@ function Stat({ icon: Icon, label, value }: { icon: React.ComponentType<{ classN
     </div>
   );
 }
-
-

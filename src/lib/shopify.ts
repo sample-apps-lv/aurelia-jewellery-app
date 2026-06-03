@@ -57,7 +57,7 @@ export interface HomepageConfig {
     navLeft: Array<{
       label: string;
       category: string;
-      subItems?: string[];
+      subItems?: Array<{ label: string; url: string }>;
       type?: "mega";
       columns?: Array<{
         title: string;
@@ -77,7 +77,7 @@ export interface HomepageConfig {
     navRight: Array<{
       label: string;
       category: string;
-      subItems?: string[];
+      subItems?: Array<{ label: string; url: string }>;
     }>;
   };
   hero: {

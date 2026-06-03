@@ -17,12 +17,19 @@ const INITIAL_HOME_DATA: HomepageConfig = {
       { 
         label: "10+1 Monthly Plans", 
         category: "rings",
-        subItems: ["Gold Mine", "Gold Reserve", "Flexi Gold"]
+        subItems: [
+          { label: "Gold Plans", url: "/plans/gold" },
+          { label: "Silver Plans", url: "/plans/silver" },
+        ]
       },
       { 
         label: "Watch Jewellery", 
         category: "earrings",
-        subItems: ["Men's Watches", "Women's Watches", "Smart Watch Straps"]
+        subItems: [
+          { label: "Men's Watches", url: "/catalog/earrings" },
+          { label: "Women's Watches", url: "/catalog/earrings" },
+          { label: "Smart Watch Straps", url: "/catalog/earrings" }
+        ]
       },
       { 
         label: "Rings", 
@@ -55,18 +62,30 @@ const INITIAL_HOME_DATA: HomepageConfig = {
             { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
             { label: "Care Guide", icon: "Info", color: "text-orange-400" },
             { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
           ]
         }
       },
       { 
         label: "Earrings", 
         category: "earrings",
-        subItems: ["Studs", "Hoops", "Drops", "Jhumkas"]
+        subItems: [
+          { label: "Studs", url: "/catalog/earrings" },
+          { label: "Hoops", url: "/catalog/earrings" },
+          { label: "Drops", url: "/catalog/earrings" },
+          { label: "Jhumkas", url: "/catalog/earrings" }
+        ]
       },
       { 
         label: "Pendants", 
         category: "necklaces",
-        subItems: ["Heart", "Religious", "Alphabet", "Diamond"]
+        subItems: [
+          { label: "Heart", url: "/catalog/necklaces" },
+          { label: "Religious", url: "/catalog/necklaces" },
+          { label: "Alphabet", url: "/catalog/necklaces" },
+          { label: "Diamond", url: "/catalog/necklaces" }
+        ]
       },
       { 
         label: "Solitaires", 
@@ -107,13 +126,30 @@ const INITIAL_HOME_DATA: HomepageConfig = {
       { 
         label: "All Jewellery", 
         category: "rings",
-        subItems: ["Gold", "Diamond", "Platinum", "Silver"]
+        subItems: [
+          { label: "Gold", url: "/catalog/rings" },
+          { label: "Diamond", url: "/catalog/rings" },
+          { label: "Platinum", url: "/catalog/rings" },
+          { label: "Silver", url: "/catalog/rings" }
+        ]
       },
     ],
     navRight: [
-      { label: "Gifts", category: "rings", subItems: ["For Her", "For Him", "Under 10k"] },
-      { label: "Gold Coins", category: "rings", subItems: ["1 Gram", "2 Gram", "5 Gram"] },
-      { label: "Offers", category: "rings", subItems: ["Discount", "Cashback", "Seasonal"] },
+      { label: "Gifts", category: "rings", subItems: [
+        { label: "For Her", url: "/catalog/rings" },
+        { label: "For Him", url: "/catalog/rings" },
+        { label: "Under 10k", url: "/catalog/rings" }
+      ] },
+      { label: "Gold Coins", category: "rings", subItems: [
+        { label: "1 Gram", url: "/catalog/rings" },
+        { label: "2 Gram", url: "/catalog/rings" },
+        { label: "5 Gram", url: "/catalog/rings" }
+      ] },
+      { label: "Offers", category: "rings", subItems: [
+        { label: "Discount", url: "/catalog/rings" },
+        { label: "Cashback", url: "/catalog/rings" },
+        { label: "Seasonal", url: "/catalog/rings" }
+      ] },
     ],
   },
   hero: {

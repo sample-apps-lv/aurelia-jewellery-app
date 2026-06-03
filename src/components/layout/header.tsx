@@ -28,12 +28,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { getHomepageConfig } from "@/lib/shopify";
-import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
-import p5 from "@/assets/p5.jpg";
-import p6 from "@/assets/p6.jpg";
+
+import { 
+  DEFAULT_NAV_LEFT, 
+  DEFAULT_NAV_RIGHT, 
+  DEFAULT_HEADER_CONFIG 
+} from "@/features/catalog/data/navigation";
 
 const ICON_MAP: Record<string, any> = {
   Gem,
@@ -43,110 +43,6 @@ const ICON_MAP: Record<string, any> = {
   Info,
   Heart
 };
-
-const DEFAULT_NAV_LEFT = [
-  { 
-    label: "10+1 Monthly Plans", 
-    category: "rings",
-    subItems: ["Gold Mine", "Gold Reserve", "Flexi Gold"]
-  },
-  { 
-    label: "Watch Jewellery", 
-    category: "earrings",
-    subItems: ["Men's Watches", "Women's Watches", "Smart Watch Straps"]
-  },
-  { 
-    label: "Rings", 
-    category: "rings",
-    type: "mega" as const,
-    columns: [
-      {
-        title: "Engagement Rings",
-        image: p4,
-        buttonText: "Design your Engagement Ring",
-        linkText: "View All Engagement Rings",
-      },
-      {
-        title: "Wedding Rings",
-        image: p5,
-        buttonText: "Personalize your Band",
-        linkText: "View All Wedding Rings",
-      },
-      {
-        title: "Daily Wear Rings",
-        image: p6,
-        buttonText: "Shop Everyday Style",
-        linkText: "View All Casual Rings",
-      },
-    ],
-    education: {
-      title: "Jewellery Guide",
-      items: [
-        { label: "Gold Guide", icon: "Gem", color: "text-orange-400" },
-        { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
-        { label: "Care Guide", icon: "Info", color: "text-orange-400" },
-        { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
-      ]
-    }
-  },
-  { 
-    label: "Earrings", 
-    category: "earrings",
-    subItems: ["Studs", "Hoops", "Drops", "Jhumkas"]
-  },
-  { 
-    label: "Pendants", 
-    category: "necklaces",
-    subItems: ["Heart", "Religious", "Alphabet", "Diamond"]
-  },
-  { 
-    label: "Solitaires", 
-    category: "rings",
-    type: "mega" as const,
-    columns: [
-      {
-        title: "Solitaire Rings",
-        image: p1,
-        buttonText: "Make your own Solitaire Ring",
-        linkText: "View All Preset Solitaire Rings",
-      },
-      {
-        title: "Solitaire Pendants",
-        image: p2,
-        buttonText: "Make your own Solitaire Pendant",
-        linkText: "View All Preset Solitaire Pendants",
-      },
-      {
-        title: "Solitaire Earrings",
-        image: p3,
-        buttonText: "Make your own Solitaire Earring",
-        linkText: "View All Preset Solitaire Earrings",
-      },
-    ],
-    education: {
-      title: "Diamond Education",
-      items: [
-        { label: "Cut", icon: "Maximize", color: "text-orange-400" },
-        { label: "Clarity", icon: "Zap", color: "text-orange-400" },
-        { label: "Tips & Tricks", icon: "Info", color: "text-orange-400" },
-        { label: "Colour", icon: "Gem", color: "text-orange-400" },
-        { label: "Carat", icon: "Award", color: "text-orange-400" },
-        { label: "Certification", icon: "Award", color: "text-orange-400" },
-      ]
-    }
-  },
-  { 
-    label: "All Jewellery", 
-    category: "rings",
-    subItems: ["Gold", "Diamond", "Platinum", "Silver"]
-  },
-];
-
-const DEFAULT_NAV_RIGHT = [
-  { label: "Gifts", category: "rings", subItems: ["For Her", "For Him", "Under 10k"] },
-  { label: "Gold Coins", category: "rings", subItems: ["1 Gram", "2 Gram", "5 Gram"] },
-  { label: "Offers", category: "rings", subItems: ["Discount", "Cashback", "Seasonal"] },
-];
 
 export function Header() {
   const { data: config } = useQuery({
@@ -159,13 +55,13 @@ export function Header() {
 
   const navLeft = config?.header?.navLeft || DEFAULT_NAV_LEFT;
   const navRight = config?.header?.navRight || DEFAULT_NAV_RIGHT;
-  const logoText = config?.header?.logoText || "GAJANAND";
-  const searchPlaceholder = config?.header?.searchPlaceholder || "Search for jewellery...";
-  const findStoreLabel = config?.header?.findStoreLabel || "Find a store";
-  const wishlistLabel = config?.header?.wishlistLabel || "Wishlist";
-  const cartLabel = config?.header?.cartLabel || "Cart";
-  const profileLabel = config?.header?.profileLabel || "Profile";
-  const moreLabel = config?.header?.moreLabel || "More";
+  const logoText = config?.header?.logoText || DEFAULT_HEADER_CONFIG.logoText;
+  const searchPlaceholder = config?.header?.searchPlaceholder || DEFAULT_HEADER_CONFIG.searchPlaceholder;
+  const findStoreLabel = config?.header?.findStoreLabel || DEFAULT_HEADER_CONFIG.findStoreLabel;
+  const wishlistLabel = config?.header?.wishlistLabel || DEFAULT_HEADER_CONFIG.wishlistLabel;
+  const cartLabel = config?.header?.cartLabel || DEFAULT_HEADER_CONFIG.cartLabel;
+  const profileLabel = config?.header?.profileLabel || DEFAULT_HEADER_CONFIG.profileLabel;
+  const moreLabel = config?.header?.moreLabel || DEFAULT_HEADER_CONFIG.moreLabel;
 
   const ActionItem = ({ icon: Icon, label, onClick, to, badge }: any) => {
     const content = (
@@ -249,14 +145,13 @@ export function Header() {
                 )}
               </div>
             ) : (
-              item.subItems?.map((sub: string) => (
-                <DropdownMenuItem key={sub} asChild>
+              item.subItems?.map((sub: { label: string, url: string }) => (
+                <DropdownMenuItem key={sub.label} asChild>
                   <Link
-                    to="/catalog/$category"
-                    params={{ category: item.category as any }}
+                    to={sub.url as any}
                     className="block px-4 py-2.5 text-[11px] font-medium hover:bg-slate-50 hover:text-primary transition-colors border-b last:border-0 border-slate-100 cursor-pointer"
                   >
-                    {sub}
+                    {sub.label}
                   </Link>
                 </DropdownMenuItem>
               ))
