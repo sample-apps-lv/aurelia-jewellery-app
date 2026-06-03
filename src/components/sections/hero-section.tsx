@@ -15,6 +15,8 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ hero }: HeroSectionProps) {
+
+  console.log({"223hero": hero})
   return (
     <section className="relative h-[400px] md:h-[700px] w-full overflow-hidden">
       <video 

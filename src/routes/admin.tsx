@@ -39,6 +39,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { VideoUploader } from "@/components/sections/video-uploader";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Gajanand Jewellers" }] }),
@@ -320,7 +321,11 @@ function AdminPage() {
                         <FormItem className="md:col-span-2"><FormLabel>Subheading</FormLabel><FormControl><Textarea {...field} /></FormControl></FormItem>
                       )} />
                       <FormField control={homepageForm.control} name="hero.videoUrl" render={({ field }) => (
-                        <FormItem><FormLabel>Video URL (.webm)</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Hero Video</FormLabel>
+                          <VideoUploader value={field.value} onChange={field.onChange} />
+                          <FormDescription>Upload a .webm, .mp4, or .mov file (max 1GB) or enter a URL.</FormDescription>
+                        </FormItem>
                       )} />
                       <div className="grid grid-cols-2 gap-4 md:col-span-2">
                         <FormField control={homepageForm.control} name="hero.ctaPrimaryText" render={({ field }) => (

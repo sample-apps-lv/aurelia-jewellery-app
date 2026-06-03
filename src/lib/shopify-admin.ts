@@ -422,3 +422,100 @@ export const createCollectionFn = createServerFn({ method: "POST" })
     const result = await shopifyAdminFetch<{ collectionCreate: any }>({ query, variables });
     return result.data.collectionCreate;
   });
+
+export const prepareVideoUploadFn = createServerFn({ method: "POST" })
+  .inputValidator((data: { filename: string; mimeType: string; fileSize: string }) => data)
+  .handler(async ({ data }) => {
+    const query = `
+      mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+        stagedUploadsCreate(input: $input) {
+          stagedTargets {
+            url
+            resourceUrl
+            parameters {
+              name
+              value
+            }
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: [
+        {
+          filename: data.filename,
+          mimeType: data.mimeType,
+          resource: "VIDEO",
+          fileSize: data.fileSize,
+          httpMethod: "POST"
+        }
+      ]
+    };
+
+    const result = await shopifyAdminFetch<{ stagedUploadsCreate: any }>({ query, variables });
+    return result.data.stagedUploadsCreate;
+  });
+
+export const registerVideoFn = createServerFn({ method: "POST" })
+  .inputValidator((data: { resourceUrl: string; filename: string }) => data)
+  .handler(async ({ data }) => {
+    const query = `
+      mutation fileCreate($files: [FileCreateInput!]!) {
+        fileCreate(files: $files) {
+          files {
+            id
+            fileStatus
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      files: [
+        {
+          alt: data.filename,
+          contentType: "VIDEO",
+          originalSource: data.resourceUrl
+        }
+      ]
+    };
+
+    const result = await shopifyAdminFetch<{ fileCreate: any }>({ query, variables });
+    return result.data.fileCreate;
+  });
+
+export const getVideoStatusFn = createServerFn({ method: "POST" })
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    const query = `
+      query getFileStatus($id: ID!) {
+        node(id: $id) {
+          ... on Video {
+            id
+            fileStatus
+            fileErrors {
+              message
+              code
+            }
+            sources {
+              url
+              mimeType
+              format
+            }
+          }
+        }
+      }
+    `;
+
+    const result = await shopifyAdminFetch<{ node: any }>({ query, variables: { id: data.id } });
+    return result.data.node;
+  });
