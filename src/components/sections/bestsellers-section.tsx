@@ -6,6 +6,7 @@ interface BestsellersSectionProps {
 }
 
 export function BestsellersSection({ products }: BestsellersSectionProps) {
+  console.log({products})
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">

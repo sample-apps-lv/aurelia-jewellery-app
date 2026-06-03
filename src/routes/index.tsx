@@ -37,6 +37,7 @@ function Index() {
   });
   
   const { data: products = [] } = useProducts();
+  console.log({"productsproducts": products})
   const bestsellers = products.filter((p) => p.isBestseller);
 
   const hero = config?.hero;

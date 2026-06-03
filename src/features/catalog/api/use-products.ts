@@ -5,7 +5,7 @@ import type { Product } from "@/types/product";
 import { getAllProducts } from "@/lib/shopify";
 
 const fetchProducts = async (): Promise<Product[]> => {
-  if (isMock() && !import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+  if (isMock()) {
     return Promise.resolve(PRODUCTS);
   }
   return getAllProducts();
