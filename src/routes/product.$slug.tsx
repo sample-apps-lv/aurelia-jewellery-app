@@ -64,7 +64,7 @@ function ProductPage() {
   };
 
   return (
-    <div className="pt-28 pb-20">
+    <div className="pt-40 pb-20">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-12 lg:gap-20">
         {/* Gallery */}
         <div className="space-y-4">
@@ -112,7 +112,7 @@ function ProductPage() {
             </div>
             <span className="text-xs text-muted-foreground">{product.rating} ({product.reviewCount} reviews)</span>
           </div>
-          <p className="text-2xl font-light mb-8">{formatPrice(product.price)}</p>
+          {/* <p className="text-2xl font-light mb-8">{formatPrice(product.price)}</p> */}
           <p className="text-muted-foreground leading-relaxed mb-8">{product.description}</p>
 
           {product.sizes && (

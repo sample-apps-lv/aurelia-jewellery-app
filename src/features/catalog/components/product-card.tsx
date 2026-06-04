@@ -79,10 +79,10 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">
             {product.title}
           </h3>
-          <div className="flex items-baseline gap-2 mt-2">
+          {/* <div className="flex items-baseline gap-2 mt-2">
             <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
             <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price * 1.2)}</span>
-          </div>
+          </div> */}
           <p className="text-[10px] font-bold text-gold mt-2 uppercase tracking-tighter flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-gold rounded-full" /> Try at Home Available
           </p>
