@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { 
   Search, 
   Heart, 
@@ -15,7 +15,8 @@ import {
   Award,
   Zap,
   Maximize,
-  Info
+  Info,
+  X
 } from "lucide-react";
 import { useCart } from "@/features/cart/store/use-cart";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getHomepageConfig } from "@/lib/shopify";
 import { motion, AnimatePresence } from "framer-motion";
+import { useProducts } from "@/features/catalog/api/use-products";
 
 import { 
   DEFAULT_NAV_LEFT, 
@@ -50,6 +52,38 @@ export function Header() {
     queryKey: ["homepage-config"],
     queryFn: getHomepageConfig,
   });
+
+  const { data: products = [] } = useProducts();
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isSearchFocused, setIsSearchFocused] = React.useState(false);
+  const searchRef = React.useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const { allMatches, filteredProducts } = React.useMemo(() => {
+    if (!searchQuery.trim()) return { allMatches: [], filteredProducts: [] };
+    
+    const matches = products.filter((p) => 
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return {
+      allMatches: matches,
+      filteredProducts: matches.slice(0, 20)
+    };
+  }, [searchQuery, products]);
+
+  // Close search results on click outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const [showHeader, setShowHeader] = React.useState(true);
   const [lastScrollY, setLastScrollY] = React.useState(0);
@@ -197,17 +231,14 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white shadow-sm">
+    <header 
+      className={cn(
+        "fixed top-0 inset-x-0 z-50 bg-white shadow-sm transition-transform duration-300 ease-in-out",
+        showHeader ? "translate-y-0" : "-translate-y-[72px]"
+      )}
+    >
       {/* Top Section */}
-      <motion.div
-        initial={false}
-        animate={{ 
-          height: showHeader ? 72 : 0, 
-          opacity: showHeader ? 1 : 0 
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="overflow-hidden bg-white"
-      >
+      <div className="bg-white">
         <div className="max-w-[1440px] mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between h-[72px] gap-6">
             {/* Logo */}
@@ -221,13 +252,80 @@ export function Header() {
             </Link>
 
             {/* Search Bar */}
-            <div className="flex-grow max-w-[600px] relative">
-              <Input 
-                type="text" 
-                placeholder={searchPlaceholder}
-                className="w-full bg-white border-[#b0b0b0] rounded-[4px] pl-10 h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="flex-grow max-w-[600px] relative" ref={searchRef}>
+              <div className="relative">
+                <Input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  placeholder={searchPlaceholder}
+                  className="w-full bg-white border-[#b0b0b0] rounded-[4px] pl-10 h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-primary"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Search Results Dropdown */}
+              <AnimatePresence>
+                {isSearchFocused && searchQuery.trim() !== "" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-white shadow-2xl rounded-xl border border-slate-100 overflow-hidden z-[60]"
+                  >
+                    <div className="max-h-[400px] overflow-y-auto">
+                      {filteredProducts.length > 0 ? (
+                        <div className="p-2">
+                          <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Products</p>
+                          {filteredProducts.map((product) => (
+                            <Link
+                              key={product.id}
+                              to="/product/$slug"
+                              params={{ slug: product.slug }}
+                              onClick={() => {
+                                setIsSearchFocused(false);
+                                setSearchQuery("");
+                              }}
+                              className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors group"
+                            >
+                              <div className="h-12 w-12 rounded-md bg-slate-100 overflow-hidden flex-shrink-0">
+                                <img src={product.images[0]} alt={product.title} className="h-full w-full object-cover" />
+                              </div>
+                              <div className="flex-grow min-w-0">
+                                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">
+                                  {product.title}
+                                </h4>
+                                <p className="text-xs text-slate-500">{product.category}</p>
+                              </div>
+                              <div className="text-sm font-bold text-slate-900">
+                                ₹{product.price.toLocaleString()}
+                              </div>
+                            </Link>
+                          ))}
+                          <div className="p-3 border-t border-slate-50 mt-1">
+                             <button className="w-full text-center text-xs font-bold text-primary hover:underline">
+                                View all {allMatches.length} results
+                             </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center">
+                          <p className="text-sm text-slate-500">No products found for "{searchQuery}"</p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Action Icons */}
@@ -240,7 +338,7 @@ export function Header() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Navigation Bar */}
       <div className="bg-[#001938] text-white border-t border-white/10">
