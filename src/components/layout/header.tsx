@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { getHomepageConfig } from "@/lib/shopify";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { 
   DEFAULT_NAV_LEFT, 
@@ -49,6 +50,28 @@ export function Header() {
     queryKey: ["homepage-config"],
     queryFn: getHomepageConfig,
   });
+
+  const [showHeader, setShowHeader] = React.useState(true);
+  const [lastScrollY, setLastScrollY] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < 50) {
+        setShowHeader(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowHeader(false);
+      } else if (currentScrollY < lastScrollY) {
+        setShowHeader(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const count = useCart((s) => s.count());
   const open = useCart((s) => s.open);
@@ -176,38 +199,48 @@ export function Header() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-white shadow-sm">
       {/* Top Section */}
-      <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between h-[72px] gap-6">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="bg-primary text-white p-1 rounded-sm">
-              <span className="font-serif font-bold text-xl leading-none">GS</span>
+      <motion.div
+        initial={false}
+        animate={{ 
+          height: showHeader ? 72 : 0, 
+          opacity: showHeader ? 1 : 0 
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="overflow-hidden bg-white"
+      >
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between h-[72px] gap-6">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+              <div className="bg-primary text-white p-1 rounded-sm">
+                <span className="font-serif font-bold text-xl leading-none">GS</span>
+              </div>
+              <span className="font-serif text-xl md:text-2xl tracking-[0.1em] text-[#1e2d48] font-bold uppercase">
+                {logoText}
+              </span>
+            </Link>
+
+            {/* Search Bar */}
+            <div className="flex-grow max-w-[600px] relative">
+              <Input 
+                type="text" 
+                placeholder={searchPlaceholder}
+                className="w-full bg-white border-[#b0b0b0] rounded-[4px] pl-10 h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             </div>
-            <span className="font-serif text-xl md:text-2xl tracking-[0.1em] text-[#1e2d48] font-bold uppercase">
-              {logoText}
-            </span>
-          </Link>
 
-          {/* Search Bar */}
-          <div className="flex-grow max-w-[600px] relative">
-            <Input 
-              type="text" 
-              placeholder={searchPlaceholder}
-              className="w-full bg-white border-[#b0b0b0] rounded-[4px] pl-10 h-10 text-sm focus-visible:ring-1 focus-visible:ring-primary"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          </div>
-
-          {/* Action Icons */}
-          <div className="flex items-center">
-            <ActionItem icon={MapPin} label={findStoreLabel} to="/account" />
-            <ActionItem icon={Heart} label={wishlistLabel} to="/account" />
-            <ActionItem icon={ShoppingBag} label={cartLabel} onClick={open} badge={count} />
-            <ActionItem icon={User} label={profileLabel} to="/account" />
-            <ActionItem icon={MoreVertical} label={moreLabel} />
+            {/* Action Icons */}
+            <div className="flex items-center">
+              <ActionItem icon={MapPin} label={findStoreLabel} to="/account" />
+              <ActionItem icon={Heart} label={wishlistLabel} to="/account" />
+              <ActionItem icon={ShoppingBag} label={cartLabel} onClick={open} badge={count} />
+              <ActionItem icon={User} label={profileLabel} to="/account" />
+              <ActionItem icon={MoreVertical} label={moreLabel} />
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Navigation Bar */}
       <div className="bg-[#001938] text-white border-t border-white/10">
