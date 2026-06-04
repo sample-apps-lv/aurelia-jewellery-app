@@ -306,8 +306,11 @@ export function Header() {
                                 </h4>
                                 <p className="text-xs text-slate-500">{product.category}</p>
                               </div>
-                              <div className="text-sm font-bold text-slate-900">
+                              {/* <div className="text-sm font-bold text-slate-900">
                                 ₹{product.price.toLocaleString()}
+                              </div> */}
+                              <div className="text-sm font-bold text-slate-900">
+                                {product.rating} ★
                               </div>
                             </Link>
                           ))}

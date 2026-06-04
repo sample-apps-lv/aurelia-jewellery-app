@@ -112,7 +112,7 @@ function ProductPage() {
             </div>
             <span className="text-xs text-muted-foreground">{product.rating} ({product.reviewCount} reviews)</span>
           </div>
-          <p className="text-2xl font-light mb-8">{formatPrice(product.price)}</p>
+          {/* <p className="text-2xl font-light mb-8">{formatPrice(product.price)}</p> */}
           <p className="text-muted-foreground leading-relaxed mb-8">{product.description}</p>
 
           {product.sizes && (
