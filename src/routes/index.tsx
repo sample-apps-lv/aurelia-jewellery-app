@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { CategoryGrid } from "@/components/sections/category-grid";
 import { PromoCarousel } from "@/components/sections/promo-carousel";
+import { GiftSelectionSection } from "@/components/sections/gift-selection-section";
 import { EnrollPlanSection } from "@/components/sections/enroll-plan-section";
 import { CollectionsSection } from "@/components/sections/collections-section";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -56,6 +57,9 @@ function Index() {
 
       {/* Promo Carousel Section */}
       <PromoCarousel items={promos} />
+
+      {/* Gift Selection Section */}
+      <GiftSelectionSection />
 
       {/* Enroll Plan Section */}
       {enrollPlan && <EnrollPlanSection data={enrollPlan} />}
