@@ -225,3 +225,51 @@ export async function getAllProducts() {
     reviews: 24,
   }));
 }
+
+export interface MetalRates {
+  gold_24k: number;
+  gold_22k: number;
+  gold_18k: number;
+  gold_14k: number;
+  silver: number;
+  lastUpdated: string;
+}
+
+export async function getMetalRates(): Promise<MetalRates | null> {
+  const query = `
+    query getMetalRates {
+      metaobjects(type: "metal_rates", first: 1) {
+        nodes {
+          fields {
+            key
+            value
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await shopifyFetch<{ metaobjects: { nodes: any[] } }>({ query });
+    const node = response.data?.metaobjects?.nodes[0];
+    
+    if (!node) {
+      console.warn("No metal_rates metaobject found.");
+      return null;
+    }
+
+    const rates: any = {};
+    node.fields.forEach((f: any) => {
+      if (f.key === "last_updated") {
+        rates.lastUpdated = f.value;
+      } else {
+        rates[f.key] = parseFloat(f.value);
+      }
+    });
+
+    return rates as MetalRates;
+  } catch (error) {
+    console.error("Error fetching metal rates:", error);
+    return null;
+  }
+}

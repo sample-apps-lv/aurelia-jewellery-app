@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Check, Info, Calculator, ArrowRight, ShieldCheck, RefreshCw, Star, Zap, PieChart as PieChartIcon, TrendingUp } from "lucide-react";
+import { Check, Info, Calculator, ArrowRight, ShieldCheck, RefreshCw, Star, Zap, PieChart as PieChartIcon, TrendingUp, Clock } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { useMetalRates } from "@/hooks/use-metal-rates";
 
 import p1 from "@/assets/p1.jpg";
 import p3 from "@/assets/p3.jpg";
@@ -30,6 +31,49 @@ export const Route = createFileRoute("/plans/$plan")({
 });
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+function MetalRateTicker() {
+  const { data: rates, isLoading } = useMetalRates();
+
+  if (isLoading || !rates) return null;
+
+  const formatPrice = (val: number | undefined) => {
+    return val?.toLocaleString() || "0";
+  };
+
+  return (
+    <div className="bg-slate-900 text-white py-2 overflow-hidden border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between text-[10px] md:text-xs font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-6 overflow-x-auto no-scrollbar py-1">
+          <div className="flex items-center gap-2 whitespace-nowrap">
+            <span className="text-amber-400">Gold 24K:</span>
+            <span>₹{formatPrice(rates.gold_24k)}/g</span>
+          </div>
+          <div className="flex items-center gap-2 whitespace-nowrap border-l border-white/20 pl-6">
+            <span className="text-amber-400">Gold 22K:</span>
+            <span>₹{formatPrice(rates.gold_22k)}/g</span>
+          </div>
+          <div className="flex items-center gap-2 whitespace-nowrap border-l border-white/20 pl-6">
+            <span className="text-amber-400">Gold 18K:</span>
+            <span>₹{formatPrice(rates.gold_18k)}/g</span>
+          </div>
+          <div className="flex items-center gap-2 whitespace-nowrap border-l border-white/20 pl-6">
+            <span className="text-amber-400">Gold 14K:</span>
+            <span>₹{formatPrice(rates.gold_14k)}/g</span>
+          </div>
+          <div className="flex items-center gap-2 whitespace-nowrap border-l border-white/20 pl-6">
+            <span className="text-slate-400">Silver:</span>
+            <span>₹{formatPrice(rates.silver)}/g</span>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-2 text-slate-400">
+          <Clock className="w-3 h-3" />
+          <span>Rates as of {new Date(rates.lastUpdated).toLocaleDateString()}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const PLAN_DATA = {
   gold: {
@@ -97,6 +141,8 @@ function PlanPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      
+      
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-br ${data.color} opacity-10`} />
@@ -153,6 +199,8 @@ function PlanPage() {
           </div>
         </div>
       </section>
+
+      <MetalRateTicker />
 
       {/* Benefits Grid */}
       <section className="py-24 bg-slate-50">
@@ -341,6 +389,7 @@ function PlanPage() {
 
 function PlanCalculator({ plan, color, textColor, chartColor }: { plan: 'gold' | 'silver', color: string, textColor: string, chartColor: string }) {
   const [amount, setAmount] = useState(plan === 'gold' ? 5000 : 1000);
+  const { data: rates } = useMetalRates();
   
   const result = useMemo(() => {
     const totalPaid = amount * 10;
@@ -348,6 +397,12 @@ function PlanCalculator({ plan, color, textColor, chartColor }: { plan: 'gold' |
     const totalValue = totalPaid + bonus;
     return { totalPaid, bonus, totalValue };
   }, [amount]);
+
+  const estimate = useMemo(() => {
+    if (!rates) return null;
+    const rate = plan === 'gold' ? rates.gold_22k : rates.silver;
+    return (result.totalValue / rate).toFixed(3);
+  }, [rates, plan, result.totalValue]);
 
   const chartData = [
     { name: 'Your Contribution', value: result.totalPaid, fill: '#f1f5f9' },
@@ -391,11 +446,11 @@ function PlanCalculator({ plan, color, textColor, chartColor }: { plan: 'gold' |
         <div className="space-y-4">
           <div className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Total Payment</span>
-            <span className="text-2xl font-bold">₹{result.totalPaid.toLocaleString()}</span>
+            <span className="text-2xl font-bold">₹{(result.totalPaid || 0).toLocaleString()}</span>
           </div>
           <div className="space-y-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Bonus Earned</span>
-            <span className={`text-2xl font-bold ${textColor}`}>+ ₹{result.bonus.toLocaleString()}</span>
+            <span className={`text-2xl font-bold ${textColor}`}>+ ₹{(result.bonus || 0).toLocaleString()}</span>
           </div>
         </div>
         
@@ -429,7 +484,13 @@ function PlanCalculator({ plan, color, textColor, chartColor }: { plan: 'gold' |
         <div className="flex justify-between items-end mb-8">
           <div className="space-y-1">
              <span className="text-sm font-medium text-slate-500">Total Redemption Value</span>
-             <h4 className={`text-4xl font-serif font-bold ${textColor}`}>₹{result.totalValue.toLocaleString()}*</h4>
+             <h4 className={`text-4xl font-serif font-bold ${textColor}`}>₹{(result.totalValue || 0).toLocaleString()}*</h4>
+             {estimate && (
+               <p className="text-xs font-bold text-slate-500 mt-1 flex items-center gap-1">
+                 <TrendingUp className="w-3 h-3 text-green-500" />
+                 Approx. {estimate}g of {plan === 'gold' ? '22K Gold' : 'Silver'}
+               </p>
+             )}
           </div>
           <div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2">
              10 + 1 Benefit
