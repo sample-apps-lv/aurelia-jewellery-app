@@ -10,6 +10,7 @@ import { ShopByPrice } from "@/components/sections/shop-by-price";
 import { BestsellersSection } from "@/components/sections/bestsellers-section";
 import { PromisesSection } from "@/components/sections/promises-section";
 import { SocialProofSection } from "@/components/sections/social-proof-section";
+import { BlogSection } from "@/features/blog/components/blog-section";
 import { useQuery } from "@tanstack/react-query";
 import { getCollectionProducts, getHomepageConfig } from "@/lib/shopify";
 
@@ -76,6 +77,9 @@ function Index() {
 
       {/* Social Proof */}
       <SocialProofSection videoUrl={hero?.videoUrl} />
+
+      {/* Blog Section */}
+      <BlogSection />
     </div>
   );
 }

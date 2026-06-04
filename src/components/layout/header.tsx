@@ -87,6 +87,17 @@ export function Header() {
   const NavItem = ({ item }: { item: any }) => {
     const [isOpen, setIsOpen] = React.useState(false);
 
+    if (!item.subItems && !item.type) {
+      return (
+        <Link 
+          to={item.url || "/"} 
+          className="flex items-center gap-1.5 text-[11px] font-bold py-3 px-2 hover:text-white/80 transition-colors whitespace-nowrap outline-none"
+        >
+          {item.label}
+        </Link>
+      );
+    }
+
     return (
       <div 
         onMouseEnter={() => setIsOpen(true)}

@@ -141,6 +141,7 @@ export const DEFAULT_NAV_RIGHT = [
     { label: "Cashback", url: "/catalog/rings" },
     { label: "Seasonal", url: "/catalog/rings" }
   ] },
+  { label: "Journal", url: "/blog" },
 ];
 
 export const DEFAULT_HEADER_CONFIG = {

@@ -10,7 +10,7 @@ export function Footer() {
             <h4 className="font-bold text-sm uppercase tracking-wider mb-6">Know Our Story</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-gold">About Us</Link></li>
-              <li><Link to="/" className="hover:text-gold">Our Blog</Link></li>
+              <li><Link to="/blog" className="hover:text-gold">Our Blog</Link></li>
               <li><Link to="/" className="hover:text-gold">Press Coverage</Link></li>
               <li><Link to="/" className="hover:text-gold">Careers</Link></li>
             </ul>
