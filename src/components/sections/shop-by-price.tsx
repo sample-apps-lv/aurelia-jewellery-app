@@ -16,12 +16,12 @@ export function ShopByPrice() {
           <h2 className="text-3xl md:text-4xl font-serif mb-4">Shop by Price</h2>
           <div className="w-20 h-1 bg-gold mx-auto" />
         </div>
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 md:gap-4">
           {DEFAULT_PRICE_POINTS.map((price) => (
             <Link
               key={price.label}
               to={price.to as any}
-              className="px-8 py-3 bg-white border border-border hover:border-gold hover:text-gold transition-all text-sm font-medium"
+              className="px-4 md:px-8 py-3 bg-white border border-border hover:border-gold hover:text-gold transition-all text-xs md:text-sm font-medium text-center"
             >
               {price.label}
             </Link>

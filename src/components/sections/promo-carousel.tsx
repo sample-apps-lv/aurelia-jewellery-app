@@ -62,25 +62,25 @@ export function PromoCarousel({ items }: PromoCarouselProps) {
           <CarouselContent>
             {items.map((promo) => (
               <CarouselItem key={promo.id}>
-                <div className={`relative h-[300px] md:h-[450px] w-full overflow-hidden rounded-xl ${promo.bgColor}`}>
+                <div className={`relative h-[400px] md:h-[450px] w-full overflow-hidden rounded-xl ${promo.bgColor}`}>
                   <img 
                     src={promo.image} 
                     alt={promo.title} 
                     className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60"
                   />
-                  <div className="absolute inset-0 flex items-center justify-between px-10 md:px-20 text-white">
-                    <div className="max-w-md">
+                  <div className="absolute inset-0 flex flex-col md:flex-row items-center justify-center md:justify-between px-6 md:px-20 text-white gap-8 md:gap-0">
+                    <div className="max-w-md text-center md:text-left">
                       <h3 className="text-3xl md:text-5xl font-serif mb-4 leading-tight">
                         {promo.title}
                       </h3>
                     </div>
-                    <div className="text-right flex flex-col items-end gap-6">
-                      <div className="border-2 border-white border-dashed rounded-full px-8 py-8 flex flex-col items-center justify-center">
-                        <span className="text-xs tracking-[0.3em] font-bold">BIG</span>
-                        <span className="text-2xl font-black tracking-tighter">GOLD</span>
-                        <span className="text-sm font-bold tracking-widest leading-none">UPGRADE</span>
+                    <div className="flex flex-col items-center md:items-end gap-6">
+                      <div className="border-2 border-white border-dashed rounded-full px-6 py-6 md:px-8 md:py-8 flex flex-col items-center justify-center">
+                        <span className="text-[10px] md:text-xs tracking-[0.3em] font-bold">BIG</span>
+                        <span className="text-xl md:text-2xl font-black tracking-tighter">GOLD</span>
+                        <span className="text-[10px] md:text-sm font-bold tracking-widest leading-none">UPGRADE</span>
                       </div>
-                      <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black rounded-none px-8 py-6 uppercase tracking-widest font-bold text-xs">
+                      <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black rounded-none px-6 md:px-8 py-4 md:py-6 uppercase tracking-widest font-bold text-[10px] md:text-xs">
                         {promo.cta}
                       </Button>
                     </div>

@@ -32,19 +32,22 @@ export function HeroSection({ hero }: HeroSectionProps) {
       <div className="absolute inset-0 bg-black/30" />
       {/* Bottom Fade */}
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-      <div className="absolute inset-0 flex items-center px-6 lg:px-20">
+      <div className="absolute inset-0 flex items-center px-6 md:px-10 lg:px-20">
         <div className="max-w-xl text-white">
-          <Badge className="mb-4 bg-gold text-white hover:bg-gold-light border-none rounded-none px-4 py-1 text-[10px] font-bold tracking-widest">
+          <Badge className="mb-4 bg-gold text-white hover:bg-gold-light border-none rounded-none px-4 py-1 text-[8px] md:text-[10px] font-bold tracking-widest">
             {hero?.badge || "EXCLUSIVE COLLECTION"}
           </Badge>
-          <h2 className="text-4xl md:text-7xl font-serif mb-6 leading-tight">
-            {hero?.heading?.split(" ")[0]} <br /> <span className="text-gold-light italic">{hero?.heading?.split(" ").slice(1).join(" ")}</span>
+          <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif mb-4 md:mb-6 leading-tight">
+            {hero?.heading ? hero.heading.split(" ")[0] : "Exquisite"} <br className="hidden md:block" /> 
+            <span className="text-gold-light italic">
+              {hero?.heading ? hero.heading.split(" ").slice(1).join(" ") : "Jewelry"}
+            </span>
           </h2>
-          <p className="text-lg mb-8 text-white/90 hidden md:block font-light tracking-wide max-w-md">
+          <p className="text-sm md:text-lg mb-8 text-white/90 font-light tracking-wide max-w-md line-clamp-3 md:line-clamp-none">
             {hero?.subheading}
           </p>
           <div className="flex gap-4">
-            <Button asChild size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-10 py-6 text-xs uppercase tracking-widest font-bold shadow-lg">
+            <Button asChild size="lg" className="cursor-pointer bg-gold hover:bg-gold-light text-white border-none rounded-none px-8 md:px-10 py-5 md:py-6 text-[10px] md:text-xs uppercase tracking-widest font-bold shadow-lg">
               <Link to={hero?.ctaPrimaryLink as any || "/catalog/rings"}>{hero?.ctaPrimaryText || "Explore Collection"}</Link>
             </Button>
           </div>

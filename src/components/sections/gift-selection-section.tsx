@@ -30,12 +30,12 @@ const GIFT_POINTS = [
 
 export function GiftSelectionSection() {
   return (
-    <section className="py-16 bg-white overflow-hidden">
+    <section className="py-12 md:py-16 bg-white overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-        <div className="flex gap-8 items-stretch">
+        <div className="flex flex-col lg:flex-row gap-8 items-stretch">
           
           {/* Left Side: Categories */}
-          <div className="flex w-1/2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:w-1/2 gap-4">
             {CATEGORIES.map((cat, idx) => (
               <Link 
                 key={idx} 
@@ -49,11 +49,11 @@ export function GiftSelectionSection() {
                     className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                 </div>
-                <h3 className="text-[20px] font-serif text-[#1A1A1A] mb-3 relative inline-block w-fit">
+                <h3 className="text-[18px] md:text-[20px] font-serif text-[#1A1A1A] mb-3 relative inline-block w-fit">
                   {cat.title}
                   <div className="absolute -bottom-1 left-0 w-full h-[1px] bg-[#1A1A1A]"></div>
                 </h3>
-                <p className="text-[14px] text-[#666666] leading-relaxed">
+                <p className="text-[13px] md:text-[14px] text-[#666666] leading-relaxed">
                   {cat.description}
                 </p>
               </Link>
@@ -61,7 +61,7 @@ export function GiftSelectionSection() {
           </div>
 
           {/* Right Side: Gift Section */}
-          <div className="relative w-1/2 bg-[#93709B] rounded-[32px] p-6 md:p-10 flex flex-col items-center justify-center text-center overflow-hidden min-h-[400px] ">
+          <div className="relative lg:w-1/2 bg-[#93709B] rounded-[32px] p-6 md:p-10 flex flex-col items-center justify-center text-center overflow-hidden min-h-[400px]">
             {/* Decorative Hearts - Scattered */}
             <div className="absolute inset-0 pointer-events-none">
                 <Heart className="absolute top-12 left-8 text-[#F4D3D3] fill-[#F4D3D3] opacity-80 w-6 h-6 rotate-[-15deg]" />

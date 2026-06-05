@@ -1,3 +1,6 @@
+import { isMock } from "./fetch-api";
+import { PRODUCTS } from "@/features/catalog/data/mock-products";
+
 const domain = import.meta.env.VITE_SHOPIFY_SHOP_DOMAIN;
 const storefrontAccessToken = import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
@@ -109,7 +112,53 @@ export interface HomepageConfig {
   }>;
 }
 
+const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
+  header: {
+    logoText: "GAJANAND",
+    searchPlaceholder: "Search for jewellery...",
+    findStoreLabel: "Find a store",
+    wishlistLabel: "Wishlist",
+    cartLabel: "Cart",
+    profileLabel: "Profile",
+    moreLabel: "More",
+    navLeft: [], // Will be filled by defaults in Header
+    navRight: []
+  },
+  hero: {
+    badge: "EXCLUSIVE COLLECTION",
+    heading: "Timeless Noir & Gold",
+    subheading: "Discover the perfect blend of tradition and modern elegance with our handcrafted fine jewelry.",
+    videoUrl: "",
+    ctaPrimaryText: "Explore Collection",
+    ctaPrimaryLink: "/catalog/rings"
+  },
+  promos: [
+    {
+      id: 1,
+      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80",
+      title: "Festive Gold Upgrade",
+      subtitle: "Exchange your old gold for new designs",
+      cta: "Learn More",
+      bgColor: "bg-[#93709B]"
+    }
+  ],
+  enrollPlan: {
+    title: "Enrol in our 10+1 Monthly Plan",
+    highlight: "10+1",
+    description: "Save monthly and get one installment free on us.",
+    ctaText: "Enrol Now"
+  },
+  promises: [
+    { title: "100% Certified", desc: "Authenticity Guaranteed", icon: "ShieldCheck" },
+    { title: "Lifetime Exchange", desc: "Buy-back Policy", icon: "RefreshCw" },
+    { title: "Free Shipping", desc: "Insured Delivery", icon: "Truck" },
+    { title: "30-Day Returns", desc: "Money Back Guarantee", icon: "Star" }
+  ]
+};
+
 export async function getHomepageConfig(): Promise<HomepageConfig | null> {
+  if (isMock()) return MOCK_HOMEPAGE_CONFIG;
+
   const query = `
     query getHomepageConfig {
       metaobjects(type: "homepage_settings", first: 1) {
@@ -127,27 +176,39 @@ export async function getHomepageConfig(): Promise<HomepageConfig | null> {
   try {
     const response = await shopifyFetch<{ metaobjects: { nodes: any[] } }>({ query });
     console.log("Storefront API metaobjects response:", JSON.stringify(response.data?.metaobjects, null, 2));
-    const node = response.data?.metaobjects?.nodes[0];
+    const node = response.data?.metaobjects?.nodes?.[0];
     
     if (!node) {
       console.warn("No homepage_settings metaobject found via Storefront API.");
-      return null;
+      return MOCK_HOMEPAGE_CONFIG;
     }
 
-    const configField = node.fields.find((f: any) => f.key === "config");
+    const configField = node.fields?.find((f: any) => f.key === "config");
     if (!configField) {
       console.warn("No 'config' field found in metaobject node.");
-      return null;
+      return MOCK_HOMEPAGE_CONFIG;
     }
 
     return JSON.parse(configField.value);
   } catch (error) {
     console.error("Error fetching homepage config:", error);
-    return null;
+    return MOCK_HOMEPAGE_CONFIG;
   }
 }
 
 export async function getCollectionProducts(collectionId: string): Promise<ShopifyProduct[]> {
+  if (isMock()) {
+    return PRODUCTS.slice(0, 8).map(p => ({
+      id: p.id,
+      title: p.title,
+      handle: p.slug,
+      featuredImage: {
+        url: p.images[0],
+        altText: p.title
+      }
+    }));
+  }
+
   const query = `
     query getCollectionProducts($id: ID!) {
       collection(id: $id) {
@@ -166,15 +227,30 @@ export async function getCollectionProducts(collectionId: string): Promise<Shopi
     }
   `;
 
-  const response = await shopifyFetch<{ collection: { products: { nodes: ShopifyProduct[] } } }>({
-    query,
-    variables: { id: `gid://shopify/Collection/${collectionId}` },
-  });
+  try {
+    const response = await shopifyFetch<{ collection: { products: { nodes: ShopifyProduct[] } } }>({
+      query,
+      variables: { id: `gid://shopify/Collection/${collectionId}` },
+    });
 
-  return response.data?.collection?.products?.nodes || [];
+    return response.data?.collection?.products?.nodes || [];
+  } catch (error) {
+    console.error("Error fetching collection products:", error);
+    return [];
+  }
 }
 
 export async function getAllProducts() {
+  if (isMock()) {
+    return PRODUCTS.map(p => ({
+      ...p,
+      stock: 10,
+      isBestseller: p.isBestseller || false,
+      rating: 4.8,
+      reviews: 24,
+    }));
+  }
+
   const query = `
     query getAllProducts {
       products(first: 50) {
@@ -208,22 +284,27 @@ export async function getAllProducts() {
     }
   `;
 
-  const response = await shopifyFetch<{ products: { nodes: any[] } }>({ query });
-  const nodes = response.data?.products?.nodes || [];
+  try {
+    const response = await shopifyFetch<{ products: { nodes: any[] } }>({ query });
+    const nodes = response.data?.products?.nodes || [];
 
-  return nodes.map((node) => ({
-    id: node.id,
-    title: node.title,
-    slug: node.handle,
-    description: node.description,
-    price: parseFloat(node.priceRange.minVariantPrice.amount),
-    images: node.images.nodes.map((img: any) => img.url),
-    category: node.collections.nodes[0]?.title || node.productType || "Jewellery",
-    stock: 10, // Mock stock as it's not in Storefront API
-    isBestseller: node.collections.nodes.some((c: any) => c.handle === "bestsellers") || false,
-    rating: 4.8,
-    reviews: 24,
-  }));
+    return nodes.map((node) => ({
+      id: node.id,
+      title: node.title,
+      slug: node.handle,
+      description: node.description,
+      price: parseFloat(node.priceRange.minVariantPrice.amount),
+      images: node.images.nodes.map((img: any) => img.url),
+      category: node.collections.nodes[0]?.title || node.productType || "Jewellery",
+      stock: 10, // Mock stock as it's not in Storefront API
+      isBestseller: node.collections.nodes.some((c: any) => c.handle === "bestsellers") || false,
+      rating: 4.8,
+      reviews: 24,
+    }));
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    return [];
+  }
 }
 
 export interface MetalRates {
@@ -235,7 +316,18 @@ export interface MetalRates {
   lastUpdated: string;
 }
 
+const MOCK_METAL_RATES: MetalRates = {
+  gold_24k: 6500,
+  gold_22k: 6000,
+  gold_18k: 5000,
+  gold_14k: 4000,
+  silver: 75,
+  lastUpdated: new Date().toISOString()
+};
+
 export async function getMetalRates(): Promise<MetalRates | null> {
+  if (isMock()) return MOCK_METAL_RATES;
+
   const query = `
     query getMetalRates {
       metaobjects(type: "metal_rates", first: 1) {
@@ -251,15 +343,15 @@ export async function getMetalRates(): Promise<MetalRates | null> {
 
   try {
     const response = await shopifyFetch<{ metaobjects: { nodes: any[] } }>({ query });
-    const node = response.data?.metaobjects?.nodes[0];
+    const node = response.data?.metaobjects?.nodes?.[0];
     
     if (!node) {
       console.warn("No metal_rates metaobject found.");
-      return null;
+      return MOCK_METAL_RATES;
     }
 
     const rates: any = {};
-    node.fields.forEach((f: any) => {
+    node.fields?.forEach((f: any) => {
       if (f.key === "last_updated") {
         rates.lastUpdated = f.value;
       } else {
@@ -270,6 +362,6 @@ export async function getMetalRates(): Promise<MetalRates | null> {
     return rates as MetalRates;
   } catch (error) {
     console.error("Error fetching metal rates:", error);
-    return null;
+    return MOCK_METAL_RATES;
   }
 }

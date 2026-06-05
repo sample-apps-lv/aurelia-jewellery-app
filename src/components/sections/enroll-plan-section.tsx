@@ -14,22 +14,28 @@ export function EnrollPlanSection({ data }: EnrollPlanSectionProps) {
   if (!data) return null;
 
   return (
-    <section className="py-4 px-4 md:px-6">
+    <section className="py-8 px-4 md:px-6">
       <div className="max-w-[1440px] mx-auto overflow-hidden rounded-md">
-        <div className="relative bg-gradient-to-r from-transparent via-[#fff1f2] to-transparent py-6 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 text-center md:text-left border-y border-[#ffe4e6]">
-          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3">
-            <h3 className="text-[#001938] text-lg md:text-xl font-bold">
-              {data.title.split(data.highlight)[0]}
-              <span className="text-destructive font-extrabold">{data.highlight}</span>
-              {data.title.split(data.highlight)[1]}
+        <div className="relative bg-gradient-to-r from-transparent via-[#fff1f2] to-transparent py-10 md:py-12 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-center md:text-left border-y border-[#ffe4e6]">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+            <h3 className="text-[#001938] text-xl md:text-2xl font-bold">
+              {data.title && data.highlight && data.title.includes(data.highlight) ? (
+                <>
+                  {data.title.split(data.highlight)[0]}
+                  <span className="text-destructive font-extrabold">{data.highlight}</span>
+                  {data.title.split(data.highlight)[1]}
+                </>
+              ) : (
+                data.title || "Our Monthly Plan"
+              )}
             </h3>
-            <p className="text-[#444] text-sm md:text-base font-medium">
+            <p className="text-[#444] text-base md:text-lg font-medium max-w-sm md:max-w-none">
               {data.description}
             </p>
           </div>
           <Link to="/plans/$plan" params={{ plan: "gold" }}>
             <Button 
-              className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-10 py-6 rounded-md shadow-sm border-none text-sm transition-all"
+              className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-12 py-7 rounded-md shadow-sm border-none text-base transition-all"
             >
               {data.ctaText}
             </Button>

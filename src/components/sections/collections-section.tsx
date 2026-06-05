@@ -40,7 +40,7 @@ export function CollectionsSection() {
             <Link
               key={col.title}
               to={col.to as any}
-              className="group relative aspect-[4/3] overflow-hidden rounded-xl shadow-md transition-all hover:shadow-xl"
+              className="group relative aspect-[2/1] md:aspect-[4/3] overflow-hidden rounded-xl shadow-md transition-all hover:shadow-xl"
             >
               <img
                 src={col.image}
