@@ -67,8 +67,31 @@ export function Header() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isSearchFocused, setIsSearchFocused] = React.useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const searchRef = React.useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollingDown = currentScrollY > lastScrollY;
+      
+      // Hide top section if scrolling down past threshold
+      // Show top section if scrolling up OR if near top of page
+      if (currentScrollY > 80 && scrollingDown) {
+        setIsScrolled(true);
+      } else if (!scrollingDown || currentScrollY <= 80) {
+        setIsScrolled(false);
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const { allMatches, filteredProducts } = React.useMemo(() => {
     if (!searchQuery.trim()) return { allMatches: [], filteredProducts: [] };
@@ -96,28 +119,7 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const [showHeader, setShowHeader] = React.useState(true);
   const [lastScrollY, setLastScrollY] = React.useState(0);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < 50) {
-        setShowHeader(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setShowHeader(false);
-        setIsMobileSearchOpen(false);
-      } else if (currentScrollY < lastScrollY) {
-        setShowHeader(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
 
   const count = useCart((s) => s.count());
   const open = useCart((s) => s.open);
@@ -138,7 +140,7 @@ export function Header() {
     const content = (
       <div className="flex flex-col items-center gap-1 group cursor-pointer min-w-[45px] sm:min-w-[60px] lg:min-w-[70px]">
         <div className="relative">
-          <Icon className="h-5 w-5 lg:h-6 lg:w-6 text-foreground group-hover:text-primary transition-colors" />
+          <Icon className="h-5 w-5 lg:h-5 text-foreground group-hover:text-primary transition-colors" />
           {badge > 0 && (
             <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
               {badge}
@@ -217,7 +219,7 @@ export function Header() {
       return (
         <Link 
           to={item.url || "/"} 
-          className="flex items-center gap-1.5 text-[10px] xl:text-[11px] font-bold py-3 px-1.5 xl:px-3 hover:text-white/80 transition-colors whitespace-nowrap outline-none uppercase tracking-wider"
+          className="flex items-center gap-1.5 text-[11px] font-bold py-3 px-2 hover:text-white/80 transition-colors whitespace-nowrap outline-none"
         >
           {item.label}
         </Link>
@@ -231,49 +233,49 @@ export function Header() {
         className="relative"
       >
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <DropdownMenuTrigger className="flex items-center gap-1 xl:gap-1.5 text-[10px] xl:text-[11px] font-bold py-3 px-1.5 xl:px-3 hover:text-white/80 transition-colors whitespace-nowrap outline-none uppercase tracking-wider">
+          <DropdownMenuTrigger className="flex items-center gap-1.5 text-[11px] font-bold py-3 px-2 hover:text-white/80 transition-colors whitespace-nowrap outline-none">
             {item.label}
             <ChevronDown className="h-3 w-3" />
           </DropdownMenuTrigger>
           <DropdownMenuContent 
             className={cn(
               "bg-white border-none rounded-none shadow-2xl mt-[-4px] p-0 overflow-hidden",
-              item.type === "mega" ? "w-[90vw] max-w-[1200px] absolute left-1/2 -translate-x-1/2" : "w-48"
+              item.type === "mega" ? "w-[1000px] left-[-200px]" : "w-48"
             )}
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
           >
             {item.type === "mega" ? (
               <div className="flex divide-x divide-slate-100">
-                <div className="grid grid-cols-3 flex-grow p-6 xl:p-10 gap-8 xl:gap-12">
+                <div className="grid grid-cols-3 flex-grow p-6 gap-8">
                   {item.columns?.map((col: any) => (
                     <div key={col.title} className="flex flex-col items-center text-center">
-                      <h4 className="text-[#001938] font-serif text-lg xl:text-xl mb-4 self-start border-b border-slate-100 w-full text-left pb-2">{col.title}</h4>
-                      <div className="relative aspect-square w-full mb-6 group/img overflow-hidden rounded-lg">
-                        <img src={col.image} alt={col.title} className="w-full h-full object-contain transition-transform duration-500 group-hover/img:scale-105" />
+                      <h4 className="text-[#001938] font-serif text-lg mb-4 self-start border-b border-slate-100 w-full text-left pb-2">{col.title}</h4>
+                      <div className="relative aspect-square w-full mb-4 group/img">
+                        <img src={col.image} alt={col.title} className="w-full h-full object-contain" />
                       </div>
                       <Link 
                         to="/catalog/$category" 
                         params={{ category: item.category }}
-                        className="w-full border border-[#001938] text-[#001938] py-2.5 text-[10px] xl:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#001938] hover:text-white transition-all group/link shadow-sm hover:shadow-md"
+                        className="w-full border border-[#001938] text-[#001938] py-2 text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#001938] hover:text-white transition-all group/link"
                       >
-                        {col.linkText} <ChevronRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                        {col.linkText} <ChevronRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   ))}
                 </div>
                 {item.education && (
-                  <div className="w-72 xl:w-80 p-6 xl:p-10 bg-slate-50/50">
-                    <h4 className="text-[#001938] font-serif text-lg xl:text-xl mb-8 border-b border-slate-200 pb-2">{item.education.title}</h4>
-                    <div className="grid grid-cols-2 gap-y-8 gap-x-6">
+                  <div className="w-64 p-6 bg-white">
+                    <h4 className="text-[#001938] font-serif text-lg mb-6 border-b border-slate-100 pb-2">{item.education.title}</h4>
+                    <div className="grid grid-cols-2 gap-y-6 gap-x-4">
                       {item.education.items.map((edu: any) => {
                         const Icon = ICON_MAP[edu.icon] || Info;
                         return (
                           <div key={edu.label} className="flex items-center gap-3 group/edu cursor-pointer">
-                            <div className={cn("p-2.5 rounded-full bg-white shadow-sm transition-all group-hover/edu:shadow-md group-hover/edu:scale-110", edu.color)}>
+                            <div className={cn("p-2 rounded-full bg-orange-50 transition-colors group-hover/edu:bg-orange-100", edu.color)}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-[11px] xl:text-[12px] font-semibold text-slate-600 group-hover/edu:text-primary transition-colors">{edu.label}</span>
+                            <span className="text-[11px] font-medium text-slate-600 group-hover/edu:text-primary transition-colors">{edu.label}</span>
                           </div>
                         );
                       })}
@@ -282,18 +284,16 @@ export function Header() {
                 )}
               </div>
             ) : (
-              <div className="py-2">
-                {item.subItems?.map((sub: { label: string, url: string }) => (
-                  <DropdownMenuItem key={sub.label} asChild>
-                    <Link
-                      to={sub.url as any}
-                      className="block px-5 py-3 text-[11px] font-semibold hover:bg-slate-50 hover:text-primary transition-colors border-b last:border-0 border-slate-50 cursor-pointer"
-                    >
-                      {sub.label}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </div>
+              item.subItems?.map((sub: { label: string, url: string }) => (
+                <DropdownMenuItem key={sub.label} asChild>
+                  <Link
+                    to={sub.url as any}
+                    className="block px-4 py-2.5 text-[11px] font-medium hover:bg-slate-50 hover:text-primary transition-colors border-b last:border-0 border-slate-100 cursor-pointer"
+                  >
+                    {sub.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))
             )}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -360,8 +360,8 @@ export function Header() {
   return (
     <header 
       className={cn(
-        "fixed top-0 inset-x-0 z-50 bg-white shadow-sm transition-transform duration-300 ease-in-out",
-        showHeader ? "translate-y-0" : "-translate-y-[100%]"
+        "fixed top-0 inset-x-0 z-50 bg-white shadow-sm transition-transform duration-500 ease-in-out",
+        isScrolled ? "lg:-translate-y-[80px]" : "translate-y-0"
       )}
     >
       {/* Top Section */}
@@ -413,10 +413,10 @@ export function Header() {
 
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 lg:gap-3 flex-shrink-0 group">
-              <div className="bg-primary text-white p-1.5 rounded-sm hidden sm:block group-hover:scale-105 transition-transform duration-300">
-                <span className="font-serif font-bold text-xl lg:text-2xl leading-none">GS</span>
+              <div className="bg-primary text-white p-1 rounded-sm hidden sm:block group-hover:scale-105 transition-transform duration-300">
+                <span className="font-serif font-bold text-lg lg:text-xl leading-none">GS</span>
               </div>
-              <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl tracking-[0.15em] text-[#1e2d48] font-black uppercase truncate max-w-[140px] sm:max-w-none">
+              <span className="font-serif text-lg sm:text-xl md:text-2xl  tracking-[0.15em] text-[#1e2d48] font-black uppercase truncate max-w-[140px] sm:max-w-none">
                 {logoText}
               </span>
             </Link>
@@ -430,7 +430,7 @@ export function Header() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   placeholder={searchPlaceholder}
-                  className="w-full bg-slate-50 border-slate-200 rounded-full pl-12 h-11 text-sm focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all"
+                  className="w-full bg-slate-50 border-slate-200 rounded-full pl-12 h-10 text-sm focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 {searchQuery && (
@@ -446,7 +446,7 @@ export function Header() {
             </div>
 
             {/* Action Icons */}
-            <div className="flex items-center gap-0 lg:gap-2">
+            <div className="flex items-center gap-0 lg:gap-1">
               <button 
                 className="lg:hidden p-2 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
