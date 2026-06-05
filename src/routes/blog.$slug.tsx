@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, User, ArrowLeft, Share2, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import Markdown from "@/components/markdown";
 
 export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostPage,
@@ -19,7 +20,7 @@ function BlogPostPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen pt-32 pb-24">
+      <div className="bg-white min-h-screen pt-40 pb-24">
         <div className="max-w-4xl mx-auto px-6 lg:px-10">
           <Skeleton className="h-4 w-24 mb-8" />
           <Skeleton className="h-12 w-3/4 mb-6" />
@@ -37,7 +38,7 @@ function BlogPostPage() {
 
   if (error || !post) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] pt-32">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] pt-40">
         <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
         <Link to="/blog">
           <Button variant="outline">Back to Blog</Button>
@@ -47,7 +48,7 @@ function BlogPostPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen pt-32 pb-24">
+    <div className="bg-white min-h-screen pt-40 pb-24">
       <article className="max-w-4xl mx-auto px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -107,13 +108,15 @@ function BlogPostPage() {
           />
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="prose prose-slate prose-lg max-w-none mb-20"
           dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        /> */}
+
+        <Markdown content={post.content} />
 
         <div className="pt-20 border-t border-slate-100">
           <h3 className="text-2xl font-serif mb-10 text-center">More from the Journal</h3>

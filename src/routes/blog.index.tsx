@@ -12,7 +12,7 @@ function BlogListPage() {
   const { data: blogs, isLoading } = useBlogs();
 
   return (
-    <div className="bg-white min-h-screen pt-32 pb-24">
+    <div className="bg-white min-h-screen pt-40 pb-24">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <motion.span
