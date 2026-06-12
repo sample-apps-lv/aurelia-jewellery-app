@@ -150,7 +150,7 @@ const INITIAL_HOME_DATA: HomepageConfig = {
         { label: "Cashback", url: "/catalog/rings" },
         { label: "Seasonal", url: "/catalog/rings" }
       ] },
-      { label: "Journal", category: "all", subItems: [{ label: "Blog", url: "/blog" }] },
+      { label: "Journal", url: "/blog" },
     ],
   },
   hero: {

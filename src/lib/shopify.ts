@@ -79,8 +79,9 @@ export interface HomepageConfig {
     }>;
     navRight: Array<{
       label: string;
-      category: string;
+      category?: string;
       subItems?: Array<{ label: string; url: string }>;
+      url?: string;
     }>;
   };
   hero: {
@@ -212,6 +213,8 @@ const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
             { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
             { label: "Care Guide", icon: "Info", color: "text-orange-400" },
             { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
           ]
         }
       },
@@ -298,14 +301,14 @@ const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
         { label: "Cashback", url: "/catalog/rings" },
         { label: "Seasonal", url: "/catalog/rings" }
       ] },
-      { label: "Journal", category: "all", subItems: [{ label: "Blog", url: "/blog" }] },
+      { label: "Journal", url: "/blog", category: "blog" },
     ]
   },
   hero: {
     badge: "EXCLUSIVE COLLECTION",
     heading: "Timeless Noir & Gold",
     subheading: "Discover the perfect blend of tradition and modern elegance with our handcrafted fine jewelry.",
-    videoUrl: "",
+    videoUrl: "https://cdn.shopify.com/videos/c/vp/81875b9cddd5466fb5f9ae51d32603ff/81875b9cddd5466fb5f9ae51d32603ff.SD-480p-1.5Mbps-86379975.mp4",
     ctaPrimaryText: "Explore Collection",
     ctaPrimaryLink: "/catalog/rings"
   },
