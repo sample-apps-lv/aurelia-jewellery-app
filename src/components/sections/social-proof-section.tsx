@@ -5,22 +5,38 @@ import p3 from "@/assets/p3.jpg";
 import p4 from "@/assets/p4.jpg";
 import p5 from "@/assets/p5.jpg";
 
-interface SocialProofSectionProps {
-  videoUrl?: string;
+interface SocialProofData {
+  heading: string;
+  subheading: string;
+  images: string[];
 }
 
-const MOCK_IMAGES = [p1, p2, p3, p4, p5];
+interface SocialProofSectionProps {
+  videoUrl?: string;
+  socialProof?: SocialProofData;
+}
 
-export function SocialProofSection({ videoUrl }: SocialProofSectionProps) {
+const DEFAULT_IMAGES = [p1, p2, p3, p4, p5];
+
+const DEFAULT_SOCIAL_PROOF: SocialProofData = {
+  heading: "#GajanandJewellers",
+  subheading: "Share your sparkle on Instagram",
+  images: [],
+};
+
+export function SocialProofSection({ videoUrl, socialProof }: SocialProofSectionProps) {
+  const data = socialProof || DEFAULT_SOCIAL_PROOF;
+  const images = data.images && data.images.length > 0 ? data.images : DEFAULT_IMAGES;
+
   return (
     <section className="py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4">#GajanandJewellers</h2>
-          <p className="text-muted-foreground">Share your sparkle on Instagram</p>
+          <h2 className="text-3xl md:text-4xl font-serif mb-4">{data.heading}</h2>
+          <p className="text-muted-foreground">{data.subheading}</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {MOCK_IMAGES.map((img, i) => (
+          {images.map((img, i) => (
             <div key={i} className="aspect-square bg-muted relative group overflow-hidden">
               <img 
                 src={img} 

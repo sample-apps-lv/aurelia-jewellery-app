@@ -13,7 +13,7 @@ import { PromisesSection } from "@/components/sections/promises-section";
 import { SocialProofSection } from "@/components/sections/social-proof-section";
 import { BlogSection } from "@/features/blog/components/blog-section";
 import { useQuery } from "@tanstack/react-query";
-import { getCollectionProducts, getHomepageConfig } from "@/lib/shopify";
+import { getHomepageConfig } from "@/lib/shopify";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,7 +25,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const CATEGORY_COLLECTION_ID = "337363632317";
 
 function Index() {
   const { data: config } = useQuery({
@@ -33,19 +32,20 @@ function Index() {
     queryFn: getHomepageConfig,
   });
 
-  const { data: categoryItems = [] } = useQuery({
-    queryKey: ["category-collection-products", CATEGORY_COLLECTION_ID],
-    queryFn: () => getCollectionProducts(CATEGORY_COLLECTION_ID),
-  });
   
   const { data: products = [] } = useProducts();
-  console.log({"productsproducts": products})
   const bestsellers = products.filter((p) => p.isBestseller);
 
   const hero = config?.hero;
+  const categoryGrid = config?.categoryGrid || [];
   const promos = config?.promos || [];
   const enrollPlan = config?.enrollPlan;
   const promises = config?.promises || [];
+  const giftSection = config?.giftSection;
+  const collections = config?.collections;
+  const trustBarItems = config?.trustBar;
+  const shopByPricePoints = config?.shopByPrice;
+  const socialProof = config?.socialProof;
 
   return (
     <div className="bg-white">
@@ -53,34 +53,37 @@ function Index() {
       <HeroSection hero={hero} />
 
       {/* Category Grid Section */}
-      <CategoryGrid items={categoryItems} />
+      <CategoryGrid items={categoryGrid} />
 
       {/* Promo Carousel Section */}
       <PromoCarousel items={promos} />
 
       {/* Gift Selection Section */}
-      <GiftSelectionSection />
+      <GiftSelectionSection
+        categories={giftSection?.categories}
+        giftPoints={giftSection?.giftPoints}
+      />
 
       {/* Enroll Plan Section */}
       {enrollPlan && <EnrollPlanSection data={enrollPlan} />}
 
       {/* Collections Section */}
-      <CollectionsSection />
+      <CollectionsSection collections={collections} />
 
       {/* Trust Bar */}
-      <TrustBar />
+      <TrustBar items={trustBarItems} />
 
       {/* Shop by Price */}
-      <ShopByPrice />
+      <ShopByPrice pricePoints={shopByPricePoints} />
 
       {/* Bestsellers */}
       <BestsellersSection products={bestsellers} />
 
-      {/* The BlueStone Promise (Icon Grid) */}
+      {/* The Promise Section (Icon Grid) */}
       <PromisesSection promises={promises} />
 
       {/* Social Proof */}
-      <SocialProofSection videoUrl={hero?.videoUrl} />
+      <SocialProofSection videoUrl={hero?.videoUrl} socialProof={socialProof} />
 
       {/* Blog Section */}
       <BlogSection />

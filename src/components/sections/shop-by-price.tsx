@@ -1,6 +1,15 @@
 import { Link } from "@tanstack/react-router";
 
-const DEFAULT_PRICE_POINTS = [
+interface PricePoint {
+  label: string;
+  to: string;
+}
+
+interface ShopByPriceProps {
+  pricePoints?: PricePoint[];
+}
+
+const DEFAULT_PRICE_POINTS: PricePoint[] = [
   { label: "Under 10k", to: "/catalog/rings" },
   { label: "10k - 20k", to: "/catalog/rings" },
   { label: "20k - 30k", to: "/catalog/rings" },
@@ -8,7 +17,9 @@ const DEFAULT_PRICE_POINTS = [
   { label: "Above 50k", to: "/catalog/rings" },
 ];
 
-export function ShopByPrice() {
+export function ShopByPrice({ pricePoints }: ShopByPriceProps) {
+  const points = pricePoints && pricePoints.length > 0 ? pricePoints : DEFAULT_PRICE_POINTS;
+
   return (
     <section className="py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
@@ -17,7 +28,7 @@ export function ShopByPrice() {
           <div className="w-20 h-1 bg-gold mx-auto" />
         </div>
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-3 md:gap-4">
-          {DEFAULT_PRICE_POINTS.map((price) => (
+          {points.map((price) => (
             <Link
               key={price.label}
               to={price.to as any}

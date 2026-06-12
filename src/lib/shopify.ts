@@ -110,6 +110,48 @@ export interface HomepageConfig {
     desc: string;
     icon: string;
   }>;
+  giftSection?: {
+    categories: Array<{
+      title: string;
+      description: string;
+      image: string;
+      to: string;
+    }>;
+    giftPoints: Array<{
+      label: string;
+      price: string;
+      to: string;
+    }>;
+  };
+  collections?: Array<{
+    title: string;
+    subtitle: string;
+    image: string;
+    to: string;
+  }>;
+  trustBar?: Array<{
+    icon: string;
+    label: string;
+  }>;
+  shopByPrice?: Array<{
+    label: string;
+    to: string;
+  }>;
+  socialProof?: {
+    heading: string;
+    subheading: string;
+    images: string[];
+  };
+  footer?: {
+    links: Array<{ title: string; items: Array<{ label: string; to: string }> }>;
+    social: Array<{ platform: string; url: string }>;
+    newsletter: { heading: string; placeholder: string; button: string };
+  };
+  categoryGrid?: Array<{
+    title: string;
+    image: string;
+    to: string;
+  }>;
 }
 
 const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
@@ -121,8 +163,143 @@ const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
     cartLabel: "Cart",
     profileLabel: "Profile",
     moreLabel: "More",
-    navLeft: [], // Will be filled by defaults in Header
-    navRight: []
+    navLeft: [
+      { 
+        label: "10+1 Monthly Plans", 
+        category: "rings",
+        subItems: [
+          { label: "Gold Plans", url: "/plans/gold" },
+          { label: "Silver Plans", url: "/plans/silver" },
+        ]
+      },
+      { 
+        label: "Watch Jewellery", 
+        category: "earrings",
+        subItems: [
+          { label: "Men's Watches", url: "/catalog/earrings" },
+          { label: "Women's Watches", url: "/catalog/earrings" },
+          { label: "Smart Watch Straps", url: "/catalog/earrings" }
+        ]
+      },
+      { 
+        label: "Rings", 
+        category: "rings",
+        type: "mega" as const,
+        columns: [
+          {
+            title: "Engagement Rings",
+            image: "/src/assets/p4.jpg",
+            buttonText: "Design your Engagement Ring",
+            linkText: "View All Engagement Rings",
+          },
+          {
+            title: "Wedding Rings",
+            image: "/src/assets/p5.jpg",
+            buttonText: "Personalize your Band",
+            linkText: "View All Wedding Rings",
+          },
+          {
+            title: "Daily Wear Rings",
+            image: "/src/assets/p6.jpg",
+            buttonText: "Shop Everyday Style",
+            linkText: "View All Casual Rings",
+          },
+        ],
+        education: {
+          title: "Jewellery Guide",
+          items: [
+            { label: "Gold Guide", icon: "Gem", color: "text-orange-400" },
+            { label: "Size Guide", icon: "Maximize", color: "text-orange-400" },
+            { label: "Care Guide", icon: "Info", color: "text-orange-400" },
+            { label: "Gifting Guide", icon: "Heart", color: "text-orange-400" },
+          ]
+        }
+      },
+      { 
+        label: "Earrings", 
+        category: "earrings",
+        subItems: [
+          { label: "Studs", url: "/catalog/earrings" },
+          { label: "Hoops", url: "/catalog/earrings" },
+          { label: "Drops", url: "/catalog/earrings" },
+          { label: "Jhumkas", url: "/catalog/earrings" }
+        ]
+      },
+      { 
+        label: "Pendants", 
+        category: "necklaces",
+        subItems: [
+          { label: "Heart", url: "/catalog/necklaces" },
+          { label: "Religious", url: "/catalog/necklaces" },
+          { label: "Alphabet", url: "/catalog/necklaces" },
+          { label: "Diamond", url: "/catalog/necklaces" }
+        ]
+      },
+      { 
+        label: "Solitaires", 
+        category: "rings",
+        type: "mega" as const,
+        columns: [
+          {
+            title: "Solitaire Rings",
+            image: "/src/assets/p1.jpg",
+            buttonText: "Make your own Solitaire Ring",
+            linkText: "View All Preset Solitaire Rings",
+          },
+          {
+            title: "Solitaire Pendants",
+            image: "/src/assets/p2.jpg",
+            buttonText: "Make your own Solitaire Pendant",
+            linkText: "View All Preset Solitaire Pendants",
+          },
+          {
+            title: "Solitaire Earrings",
+            image: "/src/assets/p3.jpg",
+            buttonText: "Make your own Solitaire Earring",
+            linkText: "View All Preset Solitaire Earrings",
+          },
+        ],
+        education: {
+          title: "Diamond Education",
+          items: [
+            { label: "Cut", icon: "Maximize", color: "text-orange-400" },
+            { label: "Clarity", icon: "Zap", color: "text-orange-400" },
+            { label: "Tips & Tricks", icon: "Info", color: "text-orange-400" },
+            { label: "Colour", icon: "Gem", color: "text-orange-400" },
+            { label: "Carat", icon: "Award", color: "text-orange-400" },
+            { label: "Certification", icon: "Award", color: "text-orange-400" },
+          ]
+        }
+      },
+      { 
+        label: "All Jewellery", 
+        category: "rings",
+        subItems: [
+          { label: "Gold", url: "/catalog/rings" },
+          { label: "Diamond", url: "/catalog/rings" },
+          { label: "Platinum", url: "/catalog/rings" },
+          { label: "Silver", url: "/catalog/rings" }
+        ]
+      },
+    ],
+    navRight: [
+      { label: "Gifts", category: "rings", subItems: [
+        { label: "For Her", url: "/catalog/rings" },
+        { label: "For Him", url: "/catalog/rings" },
+        { label: "Under 10k", url: "/catalog/rings" }
+      ] },
+      { label: "Gold Coins", category: "rings", subItems: [
+        { label: "1 Gram", url: "/catalog/rings" },
+        { label: "2 Gram", url: "/catalog/rings" },
+        { label: "5 Gram", url: "/catalog/rings" }
+      ] },
+      { label: "Offers", category: "rings", subItems: [
+        { label: "Discount", url: "/catalog/rings" },
+        { label: "Cashback", url: "/catalog/rings" },
+        { label: "Seasonal", url: "/catalog/rings" }
+      ] },
+      { label: "Journal", category: "all", subItems: [{ label: "Blog", url: "/blog" }] },
+    ]
   },
   hero: {
     badge: "EXCLUSIVE COLLECTION",
@@ -153,7 +330,85 @@ const MOCK_HOMEPAGE_CONFIG: HomepageConfig = {
     { title: "Lifetime Exchange", desc: "Buy-back Policy", icon: "RefreshCw" },
     { title: "Free Shipping", desc: "Insured Delivery", icon: "Truck" },
     { title: "30-Day Returns", desc: "Money Back Guarantee", icon: "Star" }
-  ]
+  ],
+  giftSection: {
+    categories: [
+      {
+        title: "Layered Necklaces",
+        description: "Elevate your style with chic layered necklaces for a trendy look.",
+        image: "/src/assets/p1.jpg",
+        to: "/catalog/necklaces",
+      },
+      {
+        title: "Coveted Styles",
+        description: "A curated selection of Gajanand's most coveted jewels.",
+        image: "/src/assets/p2.jpg",
+        to: "/catalog/bestsellers",
+      },
+      {
+        title: "Gajanand Man",
+        description: "Shop the perfect pieces to enhance your man's unique style.",
+        image: "/src/assets/p3.jpg",
+        to: "/catalog/men",
+      },
+    ],
+    giftPoints: [
+      { label: "Under", price: "10k", to: "/catalog/under-10k" },
+      { label: "Under", price: "30k", to: "/catalog/under-30k" },
+      { label: "Under", price: "50k", to: "/catalog/under-50k" },
+    ],
+  },
+  collections: [
+    {
+      title: "DAINTY DREAMS",
+      subtitle: "SOFT MOMENTS, BEAUTIFULLY CRAFTED",
+      image: "/src/assets/cat-everyday.jpg",
+      to: "/catalog/rings",
+    },
+    {
+      title: "RAW REVERIE",
+      subtitle: "NATURE'S UNTAMED ELEGANCE",
+      image: "/src/assets/cat-statement.jpg",
+      to: "/catalog/necklaces",
+    },
+    {
+      title: "CLAY WHISPERS",
+      subtitle: "EARTHY SOUL, GOLDEN TOUCH",
+      image: "/src/assets/cat-bridal.jpg",
+      to: "/catalog/earrings",
+    },
+  ],
+  trustBar: [
+    { icon: "Video", label: "Free Video Call" },
+    { icon: "MapPin", label: "Find a Store" },
+    { icon: "Smartphone", label: "Try at Home" },
+    { icon: "ShieldCheck", label: "The Gajanand Promise" },
+  ],
+  shopByPrice: [
+    { label: "Under 10k", to: "/catalog/rings" },
+    { label: "10k - 20k", to: "/catalog/rings" },
+    { label: "20k - 30k", to: "/catalog/rings" },
+    { label: "30k - 50k", to: "/catalog/rings" },
+    { label: "Above 50k", to: "/catalog/rings" },
+  ],
+  socialProof: {
+    heading: "#GajanandJewellers",
+    subheading: "Share your sparkle on Instagram",
+    images: [],
+  },
+  categoryGrid: [
+    { title: "RINGS", image: "/src/assets/p1.jpg", to: "/catalog/rings" },
+    { title: "NECKLACES", image: "/src/assets/p2.jpg", to: "/catalog/necklaces" },
+    { title: "EARRINGS", image: "/src/assets/p3.jpg", to: "/catalog/earrings" },
+    { title: "BRACELETS", image: "/src/assets/p4.jpg", to: "/catalog/bracelets" },
+    { title: "BANGLES", image: "/src/assets/p5.jpg", to: "/catalog/bangles" },
+    { title: "PENDANTS", image: "/src/assets/p6.jpg", to: "/catalog/pendants" },
+  ],
+  footer: {
+    links: [],
+    social: [],
+    newsletter: { heading: "Subscribe", placeholder: "Email", button: "Send" }
+  }
 };
 
 export async function getHomepageConfig(): Promise<HomepageConfig | null> {

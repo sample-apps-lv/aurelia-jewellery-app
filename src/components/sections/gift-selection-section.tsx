@@ -1,7 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 
-const CATEGORIES = [
+interface GiftCategory {
+  title: string;
+  description: string;
+  image: string;
+  to: string;
+}
+
+interface GiftPoint {
+  label: string;
+  price: string;
+  to: string;
+}
+
+interface GiftSelectionSectionProps {
+  categories?: GiftCategory[];
+  giftPoints?: GiftPoint[];
+}
+
+const DEFAULT_CATEGORIES: GiftCategory[] = [
   {
     title: "Layered Necklaces",
     description: "Elevate your style with chic layered necklaces for a trendy look.",
@@ -22,13 +40,16 @@ const CATEGORIES = [
   },
 ];
 
-const GIFT_POINTS = [
+const DEFAULT_GIFT_POINTS: GiftPoint[] = [
   { label: "Under", price: "10k", to: "/catalog/under-10k" },
   { label: "Under", price: "30k", to: "/catalog/under-30k" },
   { label: "Under", price: "50k", to: "/catalog/under-50k" },
 ];
 
-export function GiftSelectionSection() {
+export function GiftSelectionSection({ categories, giftPoints }: GiftSelectionSectionProps) {
+  const cats = categories && categories.length > 0 ? categories : DEFAULT_CATEGORIES;
+  const points = giftPoints && giftPoints.length > 0 ? giftPoints : DEFAULT_GIFT_POINTS;
+
   return (
     <section className="py-12 md:py-16 bg-white overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
@@ -36,7 +57,7 @@ export function GiftSelectionSection() {
           
           {/* Left Side: Categories */}
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:w-1/2 gap-4">
-            {CATEGORIES.map((cat, idx) => (
+            {cats.map((cat, idx) => (
               <Link 
                 key={idx} 
                 to={cat.to as any}
@@ -80,7 +101,7 @@ export function GiftSelectionSection() {
               </h2>
 
               <div className="grid grid-cols-3 gap-4 md:gap-6 w-full max-w-2xl">
-                {GIFT_POINTS.map((point, idx) => (
+                {points.map((point, idx) => (
                   <Link 
                     key={idx}
                     to={point.to as any}

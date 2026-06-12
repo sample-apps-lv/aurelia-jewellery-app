@@ -122,6 +122,53 @@ const homepageSchema = z.object({
     description: z.string().min(1, "Required"),
     ctaText: z.string().min(1, "Required"),
   }),
+  promises: z.array(z.object({
+    title: z.string().min(1, "Required"),
+    desc: z.string().min(1, "Required"),
+    icon: z.string().min(1, "Required"),
+  })).default([]),
+  giftSection: z.object({
+    categories: z.array(z.object({
+      title: z.string().min(1, "Required"),
+      description: z.string().min(1, "Required"),
+      image: z.string().min(1, "Required"),
+      to: z.string().min(1, "Required"),
+    })).default([]),
+    giftPoints: z.array(z.object({
+      label: z.string().min(1, "Required"),
+      price: z.string().min(1, "Required"),
+      to: z.string().min(1, "Required"),
+    })).default([]),
+  }).default({ categories: [], giftPoints: [] }),
+  categoryGrid: z.array(z.object({
+    title: z.string().min(1, "Required"),
+    image: z.string().min(1, "Required"),
+    to: z.string().min(1, "Required"),
+  })).default([]),
+  collections: z.array(z.object({
+    title: z.string().min(1, "Required"),
+    subtitle: z.string().optional(),
+    image: z.string().min(1, "Required"),
+    to: z.string().min(1, "Required"),
+  })).default([]),
+  trustBar: z.array(z.object({
+    icon: z.string().min(1, "Required"),
+    label: z.string().min(1, "Required"),
+  })).default([]),
+  shopByPrice: z.array(z.object({
+    label: z.string().min(1, "Required"),
+    to: z.string().min(1, "Required"),
+  })).default([]),
+  socialProof: z.object({
+    heading: z.string().min(1, "Required"),
+    subheading: z.string().optional(),
+    images: z.array(z.string()).optional(),
+  }).default({ heading: "" }),
+  footer: z.object({
+    links: z.any().optional(),
+    social: z.any().optional(),
+    newsletter: z.any().optional(),
+  }).default({}),
 });
 
 function AdminPage() {
@@ -153,7 +200,7 @@ function AdminPage() {
   });
 
   const homepageForm = useForm<z.infer<typeof homepageSchema>>({
-    resolver: zodResolver(homepageSchema),
+    resolver: zodResolver(homepageSchema as any) as any,
   });
 
   useEffect(() => {
@@ -175,6 +222,41 @@ function AdminPage() {
   const { fields: navRightFields, append: appendNavRight, remove: removeNavRight } = useFieldArray({
     control: homepageForm.control,
     name: "header.navRight",
+  });
+
+  const { fields: promisesFields, append: appendPromise, remove: removePromise } = useFieldArray({
+    control: homepageForm.control,
+    name: "promises" as any,
+  });
+
+  const { fields: giftCategoryFields, append: appendGiftCategory, remove: removeGiftCategory } = useFieldArray({
+    control: homepageForm.control,
+    name: "giftSection.categories" as any,
+  });
+
+  const { fields: giftPointFields, append: appendGiftPoint, remove: removeGiftPoint } = useFieldArray({
+    control: homepageForm.control,
+    name: "giftSection.giftPoints" as any,
+  });
+
+  const { fields: categoryGridFields, append: appendCategoryGrid, remove: removeCategoryGrid } = useFieldArray({
+    control: homepageForm.control as any,
+    name: "categoryGrid" as any,
+  });
+
+  const { fields: collectionFields, append: appendCollection, remove: removeCollection } = useFieldArray({
+    control: homepageForm.control,
+    name: "collections" as any,
+  });
+
+  const { fields: trustBarFields, append: appendTrustBar, remove: removeTrustBar } = useFieldArray({
+    control: homepageForm.control,
+    name: "trustBar" as any,
+  });
+
+  const { fields: shopByPriceFields, append: appendShopByPrice, remove: removeShopByPrice } = useFieldArray({
+    control: homepageForm.control,
+    name: "shopByPrice" as any,
   });
 
   const initMutation = useMutation({
@@ -250,10 +332,10 @@ function AdminPage() {
         <div className="grid gap-2">
           {fields.map((sub, subIdx) => (
             <div key={sub.id} className="flex gap-2 items-start">
-              <FormField control={homepageForm.control} name={`${name}.${parentIndex}.subItems.${subIdx}.label` as any} render={({ field }) => (
+              <FormField control={homepageForm.control as any} name={`${name}.${parentIndex}.subItems.${subIdx}.label` as any} render={({ field }) => (
                 <FormItem className="flex-1"><FormControl><Input {...field} placeholder="Label" className="h-8 text-xs" /></FormControl><FormMessage /></FormItem>
               )} />
-              <FormField control={homepageForm.control} name={`${name}.${parentIndex}.subItems.${subIdx}.url` as any} render={({ field }) => (
+              <FormField control={homepageForm.control as any} name={`${name}.${parentIndex}.subItems.${subIdx}.url` as any} render={({ field }) => (
                 <FormItem className="flex-1"><FormControl><Input {...field} placeholder="URL" className="h-8 text-xs" /></FormControl><FormMessage /></FormItem>
               )} />
               <Button variant="ghost" size="sm" className="h-8 w-8 text-destructive" onClick={() => remove(subIdx)}>×</Button>
@@ -275,7 +357,7 @@ function AdminPage() {
           <Button 
             variant="ghost" 
             className="text-xs font-bold uppercase tracking-widest"
-            onClick={() => initMutation.mutate()}
+            onClick={() => initMutation.mutate({ data: undefined as any })}
             disabled={initMutation.isPending}
           >
             <RefreshCw className={cn("w-4 h-4 mr-2", initMutation.isPending && "animate-spin")} />
@@ -378,7 +460,7 @@ function AdminPage() {
 
         <TabsContent value="header" className="space-y-8">
           <Form {...homepageForm}>
-            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit, onHomepageError)} className="space-y-12 pb-20">
+            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit as any, onHomepageError)} className="space-y-12 pb-20">
               <section className="space-y-6">
                 <div className="flex items-center gap-2">
                   <Layout className="w-5 h-5 text-gold" />
@@ -386,25 +468,25 @@ function AdminPage() {
                 </div>
                 <Card>
                   <CardContent className="pt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <FormField control={homepageForm.control} name="header.logoText" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.logoText" render={({ field }) => (
                       <FormItem><FormLabel>Logo Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.searchPlaceholder" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.searchPlaceholder" render={({ field }) => (
                       <FormItem><FormLabel>Search Placeholder</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.findStoreLabel" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.findStoreLabel" render={({ field }) => (
                       <FormItem><FormLabel>Find Store Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.wishlistLabel" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.wishlistLabel" render={({ field }) => (
                       <FormItem><FormLabel>Wishlist Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.cartLabel" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.cartLabel" render={({ field }) => (
                       <FormItem><FormLabel>Cart Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.profileLabel" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.profileLabel" render={({ field }) => (
                       <FormItem><FormLabel>Profile Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={homepageForm.control} name="header.moreLabel" render={({ field }) => (
+                    <FormField control={homepageForm.control as any} name="header.moreLabel" render={({ field }) => (
                       <FormItem><FormLabel>More Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </CardContent>
@@ -431,13 +513,13 @@ function AdminPage() {
                         <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeNavLeft(index)}>×</Button>
                       </CardHeader>
                       <CardContent className="grid md:grid-cols-3 gap-4">
-                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.label`} render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.label`} render={({ field }) => (
                           <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.category`} render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.category`} render={({ field }) => (
                           <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <FormField control={homepageForm.control} name={`header.navLeft.${index}.type`} render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.type`} render={({ field }) => (
                           <FormItem><FormLabel>Type</FormLabel><FormControl><Input {...field} placeholder="mega or leave empty" /></FormControl><FormMessage /></FormItem>
                         )} />
                       </CardContent>
@@ -449,22 +531,22 @@ function AdminPage() {
                               {[0, 1, 2].map((colIdx) => (
                                 <div key={colIdx} className="space-y-2 p-3 border border-border rounded-sm">
                                   <p className="text-[10px] font-bold text-muted-foreground uppercase">Column {colIdx + 1}</p>
-                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.title`} render={({ field }) => (
+                                  <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.columns.${colIdx}.title`} render={({ field }) => (
                                     <FormItem>
                                       <FormControl><Input {...field} placeholder="Title" className="h-8 text-xs" /></FormControl><FormMessage />
                                     </FormItem>
                                   )} />
-                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.image`} render={({ field }) => (
+                                  <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.columns.${colIdx}.image`} render={({ field }) => (
                                     <FormItem>
                                       <FormControl><Input {...field} placeholder="Image URL" className="h-8 text-xs" /></FormControl><FormMessage />
                                     </FormItem>
                                   )} />
-                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.buttonText`} render={({ field }) => (
+                                  <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.columns.${colIdx}.buttonText`} render={({ field }) => (
                                     <FormItem>
                                       <FormControl><Input {...field} placeholder="Button Text" className="h-8 text-xs" /></FormControl><FormMessage />
                                     </FormItem>
                                   )} />
-                                  <FormField control={homepageForm.control} name={`header.navLeft.${index}.columns.${colIdx}.linkText`} render={({ field }) => (
+                                  <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.columns.${colIdx}.linkText`} render={({ field }) => (
                                     <FormItem>
                                       <FormControl><Input {...field} placeholder="Link Text" className="h-8 text-xs" /></FormControl><FormMessage />
                                     </FormItem>
@@ -478,7 +560,7 @@ function AdminPage() {
                             <p className="text-xs uppercase tracking-widest text-gold font-bold">Education Guide</p>
                             <Card className="bg-secondary/20 border-none rounded-none">
                               <CardContent className="pt-4 space-y-4">
-                                <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.title`} render={({ field }) => (
+                                <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.education.title`} render={({ field }) => (
                                   <FormItem>
                                     <FormControl><Input {...field} placeholder="Guide Title (e.g. Diamond Education)" className="h-8 text-xs font-bold" /></FormControl><FormMessage />
                                   </FormItem>
@@ -486,17 +568,17 @@ function AdminPage() {
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
                                   {[0, 1, 2, 3, 4, 5].map((eduIdx) => (
                                     <div key={eduIdx} className="space-y-1">
-                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.label`} render={({ field }) => (
+                                      <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.education.items.${eduIdx}.label`} render={({ field }) => (
                                         <FormItem>
                                           <FormControl><Input {...field} placeholder="Label" className="h-7 text-[10px]" /></FormControl><FormMessage />
                                         </FormItem>
                                       )} />
-                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.icon`} render={({ field }) => (
+                                      <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.education.items.${eduIdx}.icon`} render={({ field }) => (
                                         <FormItem>
                                           <FormControl><Input {...field} placeholder="Icon" className="h-7 text-[10px]" /></FormControl><FormMessage />
                                         </FormItem>
                                       )} />
-                                      <FormField control={homepageForm.control} name={`header.navLeft.${index}.education.items.${eduIdx}.color`} render={({ field }) => (
+                                      <FormField control={homepageForm.control as any} name={`header.navLeft.${index}.education.items.${eduIdx}.color`} render={({ field }) => (
                                         <FormItem>
                                           <FormControl><Input {...field} placeholder="Color" className="h-7 text-[10px]" /></FormControl><FormMessage />
                                         </FormItem>
@@ -540,10 +622,10 @@ function AdminPage() {
                         <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeNavRight(index)}>×</Button>
                       </CardHeader>
                       <CardContent className="grid md:grid-cols-2 gap-4">
-                        <FormField control={homepageForm.control} name={`header.navRight.${index}.label`} render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name={`header.navRight.${index}.label`} render={({ field }) => (
                           <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <FormField control={homepageForm.control} name={`header.navRight.${index}.category`} render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name={`header.navRight.${index}.category`} render={({ field }) => (
                           <FormItem><FormLabel>Category Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                       </CardContent>
@@ -581,7 +663,7 @@ function AdminPage() {
 
           {config && (
             <Form {...homepageForm}>
-              <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit, onHomepageError)} className="space-y-12 pb-20">
+              <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit as any, onHomepageError)} className="space-y-12 pb-20">
                 <section className="space-y-6">
                   <div className="flex items-center gap-2">
                     <Layout className="w-5 h-5 text-gold" />
@@ -589,16 +671,16 @@ function AdminPage() {
                   </div>
                   <Card>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
-                      <FormField control={homepageForm.control} name="hero.badge" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="hero.badge" render={({ field }) => (
                         <FormItem><FormLabel>Badge Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="hero.heading" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="hero.heading" render={({ field }) => (
                         <FormItem><FormLabel>Heading</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="hero.subheading" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="hero.subheading" render={({ field }) => (
                         <FormItem className="md:col-span-2"><FormLabel>Subheading</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="hero.videoUrl" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="hero.videoUrl" render={({ field }) => (
                         <FormItem className="md:col-span-2">
                           <FormLabel>Hero Video</FormLabel>
                           <VideoUploader value={field.value} onChange={field.onChange} />
@@ -607,10 +689,10 @@ function AdminPage() {
                         </FormItem>
                       )} />
                       <div className="grid grid-cols-2 gap-4 md:col-span-2">
-                        <FormField control={homepageForm.control} name="hero.ctaPrimaryText" render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name="hero.ctaPrimaryText" render={({ field }) => (
                           <FormItem><FormLabel>Primary CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <FormField control={homepageForm.control} name="hero.ctaPrimaryLink" render={({ field }) => (
+                        <FormField control={homepageForm.control as any} name="hero.ctaPrimaryLink" render={({ field }) => (
                           <FormItem><FormLabel>Primary CTA Link</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                       </div>
@@ -638,17 +720,17 @@ function AdminPage() {
                           <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removePromo(index)}>×</Button>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                          <FormField control={homepageForm.control} name={`promos.${index}.title`} render={({ field }) => (
+                          <FormField control={homepageForm.control as any} name={`promos.${index}.title`} render={({ field }) => (
                             <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
-                          <FormField control={homepageForm.control} name={`promos.${index}.image`} render={({ field }) => (
+                          <FormField control={homepageForm.control as any} name={`promos.${index}.image`} render={({ field }) => (
                             <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                           )} />
                           <div className="grid grid-cols-2 gap-4">
-                            <FormField control={homepageForm.control} name={`promos.${index}.cta`} render={({ field }) => (
+                            <FormField control={homepageForm.control as any} name={`promos.${index}.cta`} render={({ field }) => (
                               <FormItem><FormLabel>CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                             )} />
-                            <FormField control={homepageForm.control} name={`promos.${index}.bgColor`} render={({ field }) => (
+                            <FormField control={homepageForm.control as any} name={`promos.${index}.bgColor`} render={({ field }) => (
                               <FormItem><FormLabel>Background Color</FormLabel><FormControl><Input {...field} placeholder="e.g. bg-slate-100" /></FormControl><FormMessage /></FormItem>
                             )} />
                           </div>
@@ -667,17 +749,289 @@ function AdminPage() {
                   </div>
                   <Card>
                     <CardContent className="pt-6 grid md:grid-cols-2 gap-6">
-                      <FormField control={homepageForm.control} name="enrollPlan.title" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="enrollPlan.title" render={({ field }) => (
                         <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="enrollPlan.highlight" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="enrollPlan.highlight" render={({ field }) => (
                         <FormItem><FormLabel>Highlight Text (10+1)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="enrollPlan.description" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="enrollPlan.description" render={({ field }) => (
                         <FormItem className="md:col-span-2"><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <FormField control={homepageForm.control} name="enrollPlan.ctaText" render={({ field }) => (
+                      <FormField control={homepageForm.control as any} name="enrollPlan.ctaText" render={({ field }) => (
                         <FormItem><FormLabel>CTA Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                    </CardContent>
+                  </Card>
+                </section>
+
+                <Separator />
+
+                {/* Promises */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Promises</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendPromise({ title: "New Promise", desc: "", icon: "" })}>
+                      + Add Promise
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {promisesFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Promise #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removePromise(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`promises.${index}.title`} render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`promises.${index}.desc`} render={({ field }) => (
+                            <FormItem><FormLabel>Description</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`promises.${index}.icon`} render={({ field }) => (
+                            <FormItem><FormLabel>Icon</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Category Grid */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Layout className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Category Grid</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendCategoryGrid({ title: "New Category", image: "", to: "" })}>
+                      + Add Category
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {categoryGridFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Category #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeCategoryGrid(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`categoryGrid.${index}.title`} render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`categoryGrid.${index}.image`} render={({ field }) => (
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`categoryGrid.${index}.to`} render={({ field }) => (
+                            <FormItem><FormLabel>Link To</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Gift Categories */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Gift Categories</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendGiftCategory({ title: "New Category", description: "", image: "", to: "" })}>
+                      + Add Category
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {giftCategoryFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Category #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeGiftCategory(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`giftSection.categories.${index}.title`} render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`giftSection.categories.${index}.description`} render={({ field }) => (
+                            <FormItem><FormLabel>Description</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`giftSection.categories.${index}.image`} render={({ field }) => (
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`giftSection.categories.${index}.to`} render={({ field }) => (
+                            <FormItem><FormLabel>Link To</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Gift Points */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Gift Points</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendGiftPoint({ label: "New Point", price: "", to: "" })}>
+                      + Add Gift Point
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {giftPointFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Gift Point #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeGiftPoint(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`giftSection.giftPoints.${index}.label`} render={({ field }) => (
+                            <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`giftSection.giftPoints.${index}.price`} render={({ field }) => (
+                            <FormItem><FormLabel>Price</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`giftSection.giftPoints.${index}.to`} render={({ field }) => (
+                            <FormItem><FormLabel>Link To</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Collections */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Collections</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendCollection({ title: "New Collection", subtitle: "", image: "", to: "" })}>
+                      + Add Collection
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {collectionFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Collection #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeCollection(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`collections.${index}.title`} render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`collections.${index}.subtitle`} render={({ field }) => (
+                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`collections.${index}.image`} render={({ field }) => (
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`collections.${index}.to`} render={({ field }) => (
+                            <FormItem><FormLabel>Link To</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Trust Bar */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Trust Bar</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendTrustBar({ icon: "", label: "New Trust Bar Item" })}>
+                      + Add Trust Item
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {trustBarFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Trust Item #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeTrustBar(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`trustBar.${index}.icon`} render={({ field }) => (
+                            <FormItem><FormLabel>Icon</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`trustBar.${index}.label`} render={({ field }) => (
+                            <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Shop By Price */}
+                <section className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Shop By Price</h2>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendShopByPrice({ label: "New Price Range", to: "" })}>
+                      + Add Price Range
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {shopByPriceFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                          <CardTitle className="text-sm font-medium">Price Range #{index + 1}</CardTitle>
+                          <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => removeShopByPrice(index)}>×</Button>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <FormField control={homepageForm.control as any} name={`shopByPrice.${index}.label`} render={({ field }) => (
+                            <FormItem><FormLabel>Label</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={homepageForm.control as any} name={`shopByPrice.${index}.to`} render={({ field }) => (
+                            <FormItem><FormLabel>Link To</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </section>
+
+                <Separator />
+
+                {/* Social Proof */}
+                <section className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-5 h-5 text-gold" />
+                    <h2 className="text-2xl font-serif">Social Proof</h2>
+                  </div>
+                  <Card>
+                    <CardContent className="pt-6 space-y-4">
+                      <FormField control={homepageForm.control as any} name="socialProof.heading" render={({ field }) => (
+                        <FormItem><FormLabel>Heading</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                      )} />
+                      <FormField control={homepageForm.control as any} name="socialProof.subheading" render={({ field }) => (
+                        <FormItem><FormLabel>Subheading</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                     </CardContent>
                   </Card>

@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import type { ShopifyProduct } from "@/lib/shopify";
 
 interface CategoryGridProps {
-  items: ShopifyProduct[];
+  items: Array<{
+    title: string;
+    image: string;
+    to: string;
+  }>;
 }
 
 export function CategoryGrid({ items }: CategoryGridProps) {
@@ -12,18 +15,17 @@ export function CategoryGrid({ items }: CategoryGridProps) {
     <section className="py-12 bg-white">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 md:gap-6">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <Link
-              key={item.id}
-              to="/product/$slug"
-              params={{ slug: item.handle }}
+              key={index}
+              to={item.to}
               className="group flex flex-col items-center gap-3 transition-transform hover:-translate-y-1"
             >
               <div className="relative aspect-square w-full rounded-[20px] bg-[#fff5f5] overflow-hidden border border-transparent group-hover:border-[#ffdada] transition-colors p-2 flex items-center justify-center">
-                {item.featuredImage ? (
+                {item.image ? (
                   <img
-                    src={item.featuredImage.url}
-                    alt={item.featuredImage.altText || item.title}
+                    src={item.image}
+                    alt={item.title}
                     className="w-full h-full object-contain mix-blend-multiply rounded-[14px]"
                   />
                 ) : (

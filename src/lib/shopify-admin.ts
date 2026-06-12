@@ -150,6 +150,7 @@ const INITIAL_HOME_DATA: HomepageConfig = {
         { label: "Cashback", url: "/catalog/rings" },
         { label: "Seasonal", url: "/catalog/rings" }
       ] },
+      { label: "Journal", category: "all", subItems: [{ label: "Blog", url: "/blog" }] },
     ],
   },
   hero: {
@@ -189,7 +190,80 @@ const INITIAL_HOME_DATA: HomepageConfig = {
     { title: "Lifetime Exchange", desc: "Buy-back Policy", icon: "RefreshCw" },
     { title: "Free Shipping", desc: "Insured Delivery", icon: "Truck" },
     { title: "30-Day Returns", desc: "Money Back Guarantee", icon: "Star" }
-  ]
+  ],
+  giftSection: {
+    categories: [
+      {
+        title: "Layered Necklaces",
+        description: "Elevate your style with chic layered necklaces for a trendy look.",
+        image: "/src/assets/p1.jpg",
+        to: "/catalog/necklaces",
+      },
+      {
+        title: "Coveted Styles",
+        description: "A curated selection of Gajanand's most coveted jewels.",
+        image: "/src/assets/p2.jpg",
+        to: "/catalog/bestsellers",
+      },
+      {
+        title: "Gajanand Man",
+        description: "Shop the perfect pieces to enhance your man's unique style.",
+        image: "/src/assets/p3.jpg",
+        to: "/catalog/men",
+      },
+    ],
+    giftPoints: [
+      { label: "Under", price: "10k", to: "/catalog/under-10k" },
+      { label: "Under", price: "30k", to: "/catalog/under-30k" },
+      { label: "Under", price: "50k", to: "/catalog/under-50k" },
+    ],
+  },
+  collections: [
+    {
+      title: "DAINTY DREAMS",
+      subtitle: "SOFT MOMENTS, BEAUTIFULLY CRAFTED",
+      image: "/src/assets/cat-everyday.jpg",
+      to: "/catalog/rings",
+    },
+    {
+      title: "RAW REVERIE",
+      subtitle: "NATURE'S UNTAMED ELEGANCE",
+      image: "/src/assets/cat-statement.jpg",
+      to: "/catalog/necklaces",
+    },
+    {
+      title: "CLAY WHISPERS",
+      subtitle: "EARTHY SOUL, GOLDEN TOUCH",
+      image: "/src/assets/cat-bridal.jpg",
+      to: "/catalog/earrings",
+    },
+  ],
+  trustBar: [
+    { icon: "Video", label: "Free Video Call" },
+    { icon: "MapPin", label: "Find a Store" },
+    { icon: "Smartphone", label: "Try at Home" },
+    { icon: "ShieldCheck", label: "The Gajanand Promise" },
+  ],
+  shopByPrice: [
+    { label: "Under 10k", to: "/catalog/rings" },
+    { label: "10k - 20k", to: "/catalog/rings" },
+    { label: "20k - 30k", to: "/catalog/rings" },
+    { label: "30k - 50k", to: "/catalog/rings" },
+    { label: "Above 50k", to: "/catalog/rings" },
+  ],
+  socialProof: {
+    heading: "#GajanandJewellers",
+    subheading: "Share your sparkle on Instagram",
+    images: [],
+  },
+  categoryGrid: [
+    { title: "RINGS", image: "/src/assets/p1.jpg", to: "/catalog/rings" },
+    { title: "NECKLACES", image: "/src/assets/p2.jpg", to: "/catalog/necklaces" },
+    { title: "EARRINGS", image: "/src/assets/p3.jpg", to: "/catalog/earrings" },
+    { title: "BRACELETS", image: "/src/assets/p4.jpg", to: "/catalog/bracelets" },
+    { title: "BANGLES", image: "/src/assets/p5.jpg", to: "/catalog/bangles" },
+    { title: "PENDANTS", image: "/src/assets/p6.jpg", to: "/catalog/pendants" },
+  ],
 };
 
 let cachedToken: { token: string; expires: number } | null = null;

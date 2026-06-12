@@ -4,7 +4,18 @@ import catStatement from "@/assets/cat-statement.jpg";
 import catBridal from "@/assets/cat-bridal.jpg";
 import { Button } from "@/components/ui/button";
 
-const COLLECTIONS = [
+interface CollectionItem {
+  title: string;
+  subtitle: string;
+  image: string;
+  to: string;
+}
+
+interface CollectionsSectionProps {
+  collections?: CollectionItem[];
+}
+
+const DEFAULT_COLLECTIONS: CollectionItem[] = [
   {
     title: "DAINTY DREAMS",
     subtitle: "SOFT MOMENTS, BEAUTIFULLY CRAFTED",
@@ -25,7 +36,9 @@ const COLLECTIONS = [
   }
 ];
 
-export function CollectionsSection() {
+export function CollectionsSection({ collections }: CollectionsSectionProps) {
+  const items = collections && collections.length > 0 ? collections : DEFAULT_COLLECTIONS;
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
@@ -36,7 +49,7 @@ export function CollectionsSection() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {COLLECTIONS.map((col) => (
+          {items.map((col) => (
             <Link
               key={col.title}
               to={col.to as any}
