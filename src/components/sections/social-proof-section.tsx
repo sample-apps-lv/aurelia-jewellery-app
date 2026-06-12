@@ -29,13 +29,13 @@ export function SocialProofSection({ videoUrl, socialProof }: SocialProofSection
   const images = data.images && data.images.length > 0 ? data.images : DEFAULT_IMAGES;
 
   return (
-    <section className="py-24 overflow-hidden">
+    <section className="py-12 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-serif mb-4">{data.heading}</h2>
           <p className="text-muted-foreground">{data.subheading}</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {images.map((img, i) => (
             <div key={i} className="aspect-square bg-muted relative group overflow-hidden">
               <img 

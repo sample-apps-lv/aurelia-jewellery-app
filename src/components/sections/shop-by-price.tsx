@@ -21,9 +21,9 @@ export function ShopByPrice({ pricePoints }: ShopByPriceProps) {
   const points = pricePoints && pricePoints.length > 0 ? pricePoints : DEFAULT_PRICE_POINTS;
 
   return (
-    <section className="py-20 bg-slate-50">
+    <section className="py-12 md:py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl font-serif mb-4">Shop by Price</h2>
           <div className="w-20 h-1 bg-gold mx-auto" />
         </div>

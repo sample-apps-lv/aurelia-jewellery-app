@@ -34,9 +34,9 @@ export function PromisesSection({ promises }: PromisesSectionProps) {
   const displayPromises = promises.length > 0 ? promises : DEFAULT_PROMISES;
 
   return (
-    <section className="py-20 bg-secondary/20">
+    <section className="py-12 md:py-20 bg-secondary/20">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
           {displayPromises.map((promise) => {
             const Icon = ICON_MAP[promise.icon] || Star;
             return (

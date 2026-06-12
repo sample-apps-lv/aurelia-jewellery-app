@@ -450,8 +450,8 @@ function AdminPage() {
     <SidebarProvider className="flex flex-col h-screen w-full overflow-hidden">
 
       {/* header */}
-      <div className="flex-none pt-6 pb-4 px-6 lg:px-10 bg-background z-10 border-b border-border shadow-sm">
-        <div className="mb-4">
+      <div className="flex-none pt-4 sm:pt-6 pb-4 px-4 sm:px-6 lg:px-10 bg-background z-10 border-b border-border shadow-sm">
+        <div className="mb-2 sm:mb-4">
           <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center w-fit transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
           </Link>
@@ -464,21 +464,23 @@ function AdminPage() {
               <h1 className="font-serif text-3xl">Dashboard</h1>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-2 sm:gap-4 flex-wrap justify-end">
             <Button 
               variant="ghost" 
-              className="text-xs font-bold uppercase tracking-widest"
+              className="text-[10px] sm:text-xs font-bold uppercase tracking-widest hidden md:flex"
               onClick={() => initMutation.mutate({ data: undefined as any })}
               disabled={initMutation.isPending}
             >
               <RefreshCw className={cn("w-4 h-4 mr-2", initMutation.isPending && "animate-spin")} />
-              {config ? "Reset to Defaults" : "Initialize Store"}
+              {config ? "Reset" : "Init"}
             </Button>
 
             <Dialog open={isCollectionDialogOpen} onOpenChange={setIsCollectionDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="rounded-none border-gold text-gold hover:bg-gold hover:text-white">
-                  <Plus className="w-4 h-4 mr-2" /> Add Collection
+                <Button variant="outline" className="rounded-none border-gold text-gold hover:bg-gold hover:text-white h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm">
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Add Collection</span>
+                  <span className="sm:hidden">Collection</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -494,8 +496,10 @@ function AdminPage() {
 
             <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="rounded-none bg-gold hover:bg-gold-light">
-                  <Plus className="w-4 h-4 mr-2" /> Add Product
+                <Button className="rounded-none bg-gold hover:bg-gold-light h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm">
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Add Product</span>
+                  <span className="sm:hidden">Product</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
@@ -517,7 +521,7 @@ function AdminPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden px-6 lg:px-10 py-6 gap-6">
+      <div className="flex flex-1 overflow-hidden px-4 sm:px-6 lg:px-10 py-4 sm:py-6 gap-0">
         {/* Desktop Sidebar (inline) */}
         <Sidebar collapsible="none" className="hidden lg:flex flex-shrink-0 w-60 h-full overflow-y-auto bg-transparent border-none">
           <SidebarContent className="p-0">
@@ -645,7 +649,7 @@ function AdminPage() {
         </div>
         
         {/* section content */}
-        <main id="main-scroll-container" className="flex-1 w-full overflow-y-auto border border-border p-6 shadow-sm rounded-md custom-scrollbar relative ">
+        <main id="main-scroll-container" className="flex-1 w-full overflow-y-auto border border-border p-4 sm:p-6 shadow-sm rounded-md custom-scrollbar relative ">
           {currentTab === 'overview' && (
             <div className="space-y-12">
               <div id="stats" className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-m-32">
@@ -874,11 +878,11 @@ function AdminPage() {
                 </div>
               </section>
 
-              <div className="fixed bottom-10 right-10 z-50">
+              <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50">
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="rounded-full shadow-2xl bg-noir hover:bg-gold px-12 py-8 text-cream font-bold uppercase tracking-widest text-sm"
+                  className="rounded-full shadow-2xl bg-noir hover:bg-gold px-6 py-6 sm:px-12 sm:py-8 text-cream font-bold uppercase tracking-widest text-xs sm:text-sm"
                   disabled={updateConfigMutation.isPending}
                 >
                   {updateConfigMutation.isPending ? "Saving Changes..." : "Save Header Config"}
@@ -1276,11 +1280,11 @@ function AdminPage() {
                   </Card>
                 </section>
 
-                <div className="fixed bottom-10 right-10 z-50">
+                <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50">
                   <Button 
                     type="submit" 
                     size="lg" 
-                    className="rounded-full shadow-2xl bg-noir hover:bg-gold px-12 py-8 text-cream font-bold uppercase tracking-widest text-sm"
+                    className="rounded-full shadow-2xl bg-noir hover:bg-gold px-6 py-6 sm:px-12 sm:py-8 text-cream font-bold uppercase tracking-widest text-xs sm:text-sm"
                     disabled={updateConfigMutation.isPending}
                   >
                     {updateConfigMutation.isPending ? "Saving Changes..." : "Save Homepage Config"}

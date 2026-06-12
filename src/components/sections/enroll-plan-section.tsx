@@ -35,7 +35,7 @@ export function EnrollPlanSection({ data }: EnrollPlanSectionProps) {
           </div>
           <Link to="/plans/$plan" params={{ plan: "gold" }}>
             <Button 
-              className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-12 py-7 rounded-md shadow-sm border-none text-base transition-all"
+              className="bg-[#fbcfe8] hover:bg-[#fda4af] text-[#001938] font-bold px-8 py-5 md:px-12 md:py-7 rounded-md shadow-sm border-none text-sm md:text-base transition-all"
             >
               {data.ctaText}
             </Button>

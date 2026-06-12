@@ -40,9 +40,9 @@ export function CollectionsSection({ collections }: CollectionsSectionProps) {
   const items = collections && collections.length > 0 ? collections : DEFAULT_COLLECTIONS;
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 md:py-20 bg-white">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-[#001938] text-2xl md:text-3xl font-serif font-semibold">
             Browse Latest Jewellery Collections
           </h2>
