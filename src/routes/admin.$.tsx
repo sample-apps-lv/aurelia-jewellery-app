@@ -243,6 +243,9 @@ function AdminPage() {
   }, [location.hash]);
 
   useEffect(() => {
+    const scrollContainer = document.getElementById('main-scroll-container');
+    if (!scrollContainer) return;
+
     const handleScroll = () => {
       const activeNav = sidebarNav.find(n => n.id === currentTab);
       if (!activeNav) return;
@@ -254,7 +257,7 @@ function AdminPage() {
       let current = "";
       for (const section of sections) {
         const rect = section.getBoundingClientRect();
-        if (rect.top <= 250) {
+        if (rect.top <= 300) {
           current = section.id;
         }
       }
@@ -265,8 +268,8 @@ function AdminPage() {
       }
     };
     
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
   }, [currentTab, activeSection]);
 
   const { data: products = [] } = useProducts();
@@ -444,22 +447,21 @@ function AdminPage() {
   };
 
   return (
-    <SidebarProvider className="block min-h-0 w-full pt-12 pb-20 px-6 lg:px-10 w-full">
+    <SidebarProvider className="flex flex-col h-screen w-full overflow-hidden">
 
       {/* header */}
-
-      <>
-        <div className="mb-6">
+      <div className="flex-none pt-6 pb-4 px-6 lg:px-10 bg-background z-10 border-b border-border shadow-sm">
+        <div className="mb-4">
           <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center w-fit transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
           </Link>
         </div>
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="lg:hidden" />
             <div>
-              <p className="text-xs tracking-widest text-gold mb-2 uppercase font-bold">Store Admin</p>
-              <h1 className="font-serif text-4xl">Dashboard</h1>
+              <p className="text-[10px] tracking-widest text-gold mb-1 uppercase font-bold">Store Admin</p>
+              <h1 className="font-serif text-3xl">Dashboard</h1>
             </div>
           </div>
           <div className="flex gap-4">
@@ -513,11 +515,11 @@ function AdminPage() {
             </Dialog>
           </div>
         </div>
-      </>
+      </div>
 
-      <div className="flex flex-col lg:flex-row items-start w-full">
+      <div className="flex flex-1 overflow-hidden px-6 lg:px-10 py-6 gap-6">
         {/* Desktop Sidebar (inline) */}
-        <Sidebar collapsible="none" className="hidden lg:flex flex-shrink-0 sticky top-32 h-fit bg-transparent border-none ">
+        <Sidebar collapsible="none" className="hidden lg:flex flex-shrink-0 w-60 h-full overflow-y-auto bg-transparent border-none">
           <SidebarContent className="p-0">
             <SidebarGroup className="p-0">
               <SidebarGroupContent>
@@ -551,9 +553,10 @@ function AdminPage() {
                                       onClick={(e) => {
                                         e.preventDefault();
                                         const el = document.getElementById(sub.target);
-                                        if (el) {
-                                          const y = el.getBoundingClientRect().top + window.scrollY - 100;
-                                          window.scrollTo({ top: y, behavior: 'smooth' });
+                                        const container = document.getElementById('main-scroll-container');
+                                        if (el && container) {
+                                          const y = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top - 40;
+                                          container.scrollTo({ top: y, behavior: 'smooth' });
                                           window.history.pushState(null, '', `#${sub.target}`);
                                           setActiveSection(sub.target);
                                         }
@@ -578,67 +581,71 @@ function AdminPage() {
         </Sidebar>
 
         {/* Mobile Sidebar */}
-        <Sidebar className="lg:hidden">
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {sidebarNav.map((nav) => {
-                    const isActive = currentTab === nav.id;
-                    return (
-                      <SidebarMenuItem key={nav.id}>
-                        <SidebarMenuButton 
-                          asChild 
-                          isActive={isActive}
-                          className={cn(
-                            "px-4 py-5 h-auto",
-                            isActive && "text-gold"
+        <div className="lg:hidden">
+          <Sidebar className="lg:hidden">
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {sidebarNav.map((nav) => {
+                      const isActive = currentTab === nav.id;
+                      return (
+                        <SidebarMenuItem key={nav.id}>
+                          <SidebarMenuButton 
+                            asChild 
+                            isActive={isActive}
+                            className={cn(
+                              "px-4 py-5 h-auto",
+                              isActive && "text-gold"
+                            )}
+                          >
+                            <Link to="/admin/$" params={{ _splat: nav.href }}>
+                              <nav.icon className="w-4 h-4 mr-2" />
+                              <span className="font-serif text-lg">{nav.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                          {isActive && nav.subItems.length > 0 && (
+                            <SidebarMenuSub>
+                              {nav.subItems.map(sub => {
+                                const isSubActive = activeSection === sub.target;
+                                return (
+                                  <SidebarMenuSubItem key={sub.target}>
+                                    <SidebarMenuSubButton asChild>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          const el = document.getElementById(sub.target);
+                                          const container = document.getElementById('main-scroll-container');
+                                          if (el && container) {
+                                            const y = el.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top - 40;
+                                            container.scrollTo({ top: y, behavior: 'smooth' });
+                                            window.history.pushState(null, '', `#${sub.target}`);
+                                            setActiveSection(sub.target);
+                                          }
+                                        }}
+                                        className={cn("text-sm py-2", isSubActive ? "text-gold" : "hover:text-gold")}
+                                      >
+                                        {sub.title}
+                                      </button>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                );
+                              })}
+                            </SidebarMenuSub>
                           )}
-                        >
-                          <Link to="/admin/$" params={{ _splat: nav.href }}>
-                            <nav.icon className="w-4 h-4 mr-2" />
-                            <span className="font-serif text-lg">{nav.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                        {isActive && nav.subItems.length > 0 && (
-                          <SidebarMenuSub>
-                            {nav.subItems.map(sub => {
-                              const isSubActive = activeSection === sub.target;
-                              return (
-                                <SidebarMenuSubItem key={sub.target}>
-                                  <SidebarMenuSubButton asChild>
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        const el = document.getElementById(sub.target);
-                                        if (el) {
-                                          const y = el.getBoundingClientRect().top + window.scrollY - 100;
-                                          window.scrollTo({ top: y, behavior: 'smooth' });
-                                          window.history.pushState(null, '', `#${sub.target}`);
-                                          setActiveSection(sub.target);
-                                        }
-                                      }}
-                                      className={cn("text-sm py-2", isSubActive ? "text-gold" : "hover:text-gold")}
-                                    >
-                                      {sub.title}
-                                    </button>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              );
-                            })}
-                          </SidebarMenuSub>
-                        )}
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
-
-        <main className="w-full border border-border p-6 shadow-sm flex-1 rounded-md">
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </div>
+        
+        {/* section content */}
+        <main id="main-scroll-container" className="flex-1 w-full overflow-y-auto border border-border p-6 shadow-sm rounded-md custom-scrollbar relative ">
           {currentTab === 'overview' && (
             <div className="space-y-12">
               <div id="stats" className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-m-32">
