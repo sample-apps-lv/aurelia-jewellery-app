@@ -13,7 +13,6 @@ import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-condi
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as FraudWarningRouteImport } from './routes/fraud-warning'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -21,6 +20,7 @@ import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as PlansPlanRouteImport } from './routes/plans.$plan'
 import { Route as CatalogCategoryRouteImport } from './routes/catalog.$category'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminSplatRouteImport } from './routes/admin.$'
 
 const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
   id: '/terms-and-conditions',
@@ -40,11 +40,6 @@ const FraudWarningRoute = FraudWarningRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountRoute = AccountRouteImport.update({
@@ -82,15 +77,20 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSplatRoute = AdminSplatRouteImport.update({
+  id: '/admin/$',
+  path: '/admin/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
   '/fraud-warning': typeof FraudWarningRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/admin/$': typeof AdminSplatRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/plans/$plan': typeof PlansPlanRoute
@@ -100,11 +100,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
   '/fraud-warning': typeof FraudWarningRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/admin/$': typeof AdminSplatRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/plans/$plan': typeof PlansPlanRoute
@@ -115,11 +115,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
   '/fraud-warning': typeof FraudWarningRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/admin/$': typeof AdminSplatRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/catalog/$category': typeof CatalogCategoryRoute
   '/plans/$plan': typeof PlansPlanRoute
@@ -131,11 +131,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/account'
-    | '/admin'
     | '/checkout'
     | '/fraud-warning'
     | '/privacy-policy'
     | '/terms-and-conditions'
+    | '/admin/$'
     | '/blog/$slug'
     | '/catalog/$category'
     | '/plans/$plan'
@@ -145,11 +145,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/account'
-    | '/admin'
     | '/checkout'
     | '/fraud-warning'
     | '/privacy-policy'
     | '/terms-and-conditions'
+    | '/admin/$'
     | '/blog/$slug'
     | '/catalog/$category'
     | '/plans/$plan'
@@ -159,11 +159,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/account'
-    | '/admin'
     | '/checkout'
     | '/fraud-warning'
     | '/privacy-policy'
     | '/terms-and-conditions'
+    | '/admin/$'
     | '/blog/$slug'
     | '/catalog/$category'
     | '/plans/$plan'
@@ -174,11 +174,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
-  AdminRoute: typeof AdminRoute
   CheckoutRoute: typeof CheckoutRoute
   FraudWarningRoute: typeof FraudWarningRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
+  AdminSplatRoute: typeof AdminSplatRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CatalogCategoryRoute: typeof CatalogCategoryRoute
   PlansPlanRoute: typeof PlansPlanRoute
@@ -214,13 +214,6 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account': {
@@ -272,17 +265,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/$': {
+      id: '/admin/$'
+      path: '/admin/$'
+      fullPath: '/admin/$'
+      preLoaderRoute: typeof AdminSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
-  AdminRoute: AdminRoute,
   CheckoutRoute: CheckoutRoute,
   FraudWarningRoute: FraudWarningRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
+  AdminSplatRoute: AdminSplatRoute,
   BlogSlugRoute: BlogSlugRoute,
   CatalogCategoryRoute: CatalogCategoryRoute,
   PlansPlanRoute: PlansPlanRoute,

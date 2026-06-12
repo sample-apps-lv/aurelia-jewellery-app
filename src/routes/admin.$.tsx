@@ -1,7 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams, useLocation } from "@tanstack/react-router";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { useProducts } from "@/features/catalog/api/use-products";
 import { formatPrice } from "@/lib/format";
-import { Package, DollarSign, ShoppingCart, Users, Plus, Layout, Settings, RefreshCw } from "lucide-react";
+import { Package, DollarSign, ShoppingCart, Users, Plus, Layout, Settings, RefreshCw, ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,10 +55,54 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { VideoUploader } from "@/components/sections/video-uploader";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/admin/$")({
   head: () => ({ meta: [{ title: "Admin — Gajanand Jewellers" }] }),
   component: AdminPage,
 });
+
+const sidebarNav = [
+  {
+    title: "Overview",
+    href: "overview",
+    id: "overview",
+    icon: Layout,
+    subItems: [
+      { title: "Dashboard Stats", target: "stats" },
+      { title: "Recent Orders", target: "orders" },
+      { title: "Inventory", target: "inventory" }
+    ]
+  },
+  {
+    title: "Homepage Editor",
+    href: "homepage",
+    id: "homepage",
+    icon: Layout,
+    subItems: [
+      { title: "Hero Section", target: "hero" },
+      { title: "Promo Carousel", target: "promo" },
+      { title: "Enroll Plan", target: "enroll" },
+      { title: "Promises", target: "promises" },
+      { title: "Category Grid", target: "category-grid" },
+      { title: "Gift Categories", target: "gift-categories" },
+      { title: "Gift Points", target: "gift-points" },
+      { title: "Collections", target: "collections" },
+      { title: "Trust Bar", target: "trust-bar" },
+      { title: "Shop By Price", target: "shop-by-price" },
+      { title: "Social Proof", target: "social-proof" }
+    ]
+  },
+  {
+    title: "Header Editor",
+    href: "header",
+    id: "header",
+    icon: Settings,
+    subItems: [
+      { title: "Header Identity", target: "header-identity" },
+      { title: "Left Navigation", target: "left-nav" },
+      { title: "Right Navigation", target: "right-nav" }
+    ]
+  }
+];
 
 const productSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -172,6 +230,45 @@ const homepageSchema = z.object({
 });
 
 function AdminPage() {
+  const { _splat } = useParams({ strict: false });
+  const currentTab = _splat || 'overview';
+
+  const location = useLocation();
+  const [activeSection, setActiveSection] = useState("");
+
+  useEffect(() => {
+    if (location.hash) {
+      setActiveSection(location.hash.replace('#', ''));
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const activeNav = sidebarNav.find(n => n.id === currentTab);
+      if (!activeNav) return;
+      
+      const sections = activeNav.subItems
+        .map(s => document.getElementById(s.target))
+        .filter(Boolean) as HTMLElement[];
+        
+      let current = "";
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 250) {
+          current = section.id;
+        }
+      }
+      
+      if (current && current !== activeSection) {
+        setActiveSection(current);
+        window.history.replaceState(null, '', `#${current}`);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentTab, activeSection]);
+
   const { data: products = [] } = useProducts();
   const queryClient = useQueryClient();
   
@@ -347,73 +444,204 @@ function AdminPage() {
   };
 
   return (
-    <div className="pt-32 pb-20 px-6 lg:px-10 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <p className="text-xs tracking-widest text-gold mb-2 uppercase font-bold">Store Admin</p>
-          <h1 className="font-serif text-4xl">Dashboard</h1>
+    <SidebarProvider className="block min-h-0 w-full pt-12 pb-20 px-6 lg:px-10 w-full">
+
+      {/* header */}
+
+      <>
+        <div className="mb-6">
+          <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center w-fit transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
+          </Link>
         </div>
-        <div className="flex gap-4">
-          <Button 
-            variant="ghost" 
-            className="text-xs font-bold uppercase tracking-widest"
-            onClick={() => initMutation.mutate({ data: undefined as any })}
-            disabled={initMutation.isPending}
-          >
-            <RefreshCw className={cn("w-4 h-4 mr-2", initMutation.isPending && "animate-spin")} />
-            {config ? "Reset to Defaults" : "Initialize Store"}
-          </Button>
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-4">
+            <SidebarTrigger className="lg:hidden" />
+            <div>
+              <p className="text-xs tracking-widest text-gold mb-2 uppercase font-bold">Store Admin</p>
+              <h1 className="font-serif text-4xl">Dashboard</h1>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <Button 
+              variant="ghost" 
+              className="text-xs font-bold uppercase tracking-widest"
+              onClick={() => initMutation.mutate({ data: undefined as any })}
+              disabled={initMutation.isPending}
+            >
+              <RefreshCw className={cn("w-4 h-4 mr-2", initMutation.isPending && "animate-spin")} />
+              {config ? "Reset to Defaults" : "Initialize Store"}
+            </Button>
 
-          <Dialog open={isCollectionDialogOpen} onOpenChange={setIsCollectionDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="rounded-none border-gold text-gold hover:bg-gold hover:text-white">
-                <Plus className="w-4 h-4 mr-2" /> Add Collection
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Create Collection</DialogTitle></DialogHeader>
-              <Form {...productForm}>
-                <form onSubmit={(e) => { e.preventDefault(); createCollectionMutation.mutate({ data: { title: "New Col" } }) }} className="space-y-4 pt-4">
-                  <Input placeholder="Title" />
-                  <Button type="submit">Create</Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+            <Dialog open={isCollectionDialogOpen} onOpenChange={setIsCollectionDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="rounded-none border-gold text-gold hover:bg-gold hover:text-white">
+                  <Plus className="w-4 h-4 mr-2" /> Add Collection
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Create Collection</DialogTitle></DialogHeader>
+                <Form {...productForm}>
+                  <form onSubmit={(e) => { e.preventDefault(); createCollectionMutation.mutate({ data: { title: "New Col" } }) }} className="space-y-4 pt-4">
+                    <Input placeholder="Title" />
+                    <Button type="submit">Create</Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
 
-          <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="rounded-none bg-gold hover:bg-gold-light">
-                <Plus className="w-4 h-4 mr-2" /> Add Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader><DialogTitle>Add New Product</DialogTitle></DialogHeader>
-              <Form {...productForm}>
-                <form onSubmit={productForm.handleSubmit((v) => createProductMutation.mutate({ data: v }))} className="space-y-4 pt-4">
-                  <FormField control={productForm.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={productForm.control} name="price" render={({ field }) => (
-                    <FormItem><FormLabel>Price (INR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <Button type="submit" className="w-full bg-gold" disabled={createProductMutation.isPending}>Create Product</Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+            <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="rounded-none bg-gold hover:bg-gold-light">
+                  <Plus className="w-4 h-4 mr-2" /> Add Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader><DialogTitle>Add New Product</DialogTitle></DialogHeader>
+                <Form {...productForm}>
+                  <form onSubmit={productForm.handleSubmit((v) => createProductMutation.mutate({ data: v }))} className="space-y-4 pt-4">
+                    <FormField control={productForm.control} name="title" render={({ field }) => (
+                      <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={productForm.control} name="price" render={({ field }) => (
+                      <FormItem><FormLabel>Price (INR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <Button type="submit" className="w-full bg-gold" disabled={createProductMutation.isPending}>Create Product</Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-      </div>
+      </>
 
-      <Tabs defaultValue="overview" className="space-y-8">
-        <TabsList className="bg-secondary/50 p-1 rounded-none border border-border">
-          <TabsTrigger value="overview" className="rounded-none px-8">Overview</TabsTrigger>
-          <TabsTrigger value="homepage" className="rounded-none px-8">Homepage Editor</TabsTrigger>
-          <TabsTrigger value="header" className="rounded-none px-8">Header Editor</TabsTrigger>
-        </TabsList>
+      <div className="flex flex-col lg:flex-row items-start w-full">
+        {/* Desktop Sidebar (inline) */}
+        <Sidebar collapsible="none" className="hidden lg:flex flex-shrink-0 sticky top-32 h-fit bg-transparent border-none ">
+          <SidebarContent className="p-0">
+            <SidebarGroup className="p-0">
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {sidebarNav.map((nav) => {
+                    const isActive = currentTab === nav.id;
+                    return (
+                      <SidebarMenuItem key={nav.id} className="mb-2">
+                        <SidebarMenuButton 
+                          asChild 
+                          isActive={isActive}
+                          className={cn(
+                            "px-4 py-5 rounded-none font-medium transition-colors border-l-2 h-auto hover:bg-secondary/50",
+                            isActive ? "bg-gold/10 text-gold border-gold hover:text-gold hover:bg-gold/20" : "border-transparent text-muted-foreground"
+                          )}
+                        >
+                          <Link to="/admin/$" params={{ _splat: nav.href }}>
+                            <nav.icon className="w-4 h-4 mr-2" />
+                            <span className="font-serif tracking-wide text-base">{nav.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                        {isActive && nav.subItems.length > 0 && (
+                          <SidebarMenuSub className="ml-5 mt-2 border-l-border">
+                            {nav.subItems.map(sub => {
+                              const isSubActive = activeSection === sub.target;
+                              return (
+                                <SidebarMenuSubItem key={sub.target}>
+                                  <SidebarMenuSubButton asChild>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        const el = document.getElementById(sub.target);
+                                        if (el) {
+                                          const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                                          window.scrollTo({ top: y, behavior: 'smooth' });
+                                          window.history.pushState(null, '', `#${sub.target}`);
+                                          setActiveSection(sub.target);
+                                        }
+                                      }}
+                                      className={cn("text-xs font-medium tracking-wide uppercase transition-colors h-auto py-2", isSubActive ? "text-gold" : "text-muted-foreground hover:text-gold")}
+                                    >
+                                      {sub.title}
+                                    </button>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              );
+                            })}
+                          </SidebarMenuSub>
+                        )}
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
 
-        <TabsContent value="overview" className="space-y-12">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Mobile Sidebar */}
+        <Sidebar className="lg:hidden">
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {sidebarNav.map((nav) => {
+                    const isActive = currentTab === nav.id;
+                    return (
+                      <SidebarMenuItem key={nav.id}>
+                        <SidebarMenuButton 
+                          asChild 
+                          isActive={isActive}
+                          className={cn(
+                            "px-4 py-5 h-auto",
+                            isActive && "text-gold"
+                          )}
+                        >
+                          <Link to="/admin/$" params={{ _splat: nav.href }}>
+                            <nav.icon className="w-4 h-4 mr-2" />
+                            <span className="font-serif text-lg">{nav.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                        {isActive && nav.subItems.length > 0 && (
+                          <SidebarMenuSub>
+                            {nav.subItems.map(sub => {
+                              const isSubActive = activeSection === sub.target;
+                              return (
+                                <SidebarMenuSubItem key={sub.target}>
+                                  <SidebarMenuSubButton asChild>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        const el = document.getElementById(sub.target);
+                                        if (el) {
+                                          const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                                          window.scrollTo({ top: y, behavior: 'smooth' });
+                                          window.history.pushState(null, '', `#${sub.target}`);
+                                          setActiveSection(sub.target);
+                                        }
+                                      }}
+                                      className={cn("text-sm py-2", isSubActive ? "text-gold" : "hover:text-gold")}
+                                    >
+                                      {sub.title}
+                                    </button>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              );
+                            })}
+                          </SidebarMenuSub>
+                        )}
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+
+        <main className="w-full border border-border p-6 shadow-sm flex-1 rounded-md">
+          {currentTab === 'overview' && (
+            <div className="space-y-12">
+              <div id="stats" className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-m-32">
             <Stat icon={DollarSign} label="Total Sales" value={formatPrice(totalSales)} />
             <Stat icon={ShoppingCart} label="Orders" value={String(totalOrders)} />
             <Stat icon={Package} label="Products" value={String(products.length)} />
@@ -421,7 +649,7 @@ function AdminPage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-10">
-            <section>
+            <section id="orders" className="scroll-m-32 pt-4">
               <h2 className="font-serif text-2xl mb-6">Recent Orders</h2>
               <div className="border border-border">
                 <div className="grid grid-cols-4 px-4 py-3 text-[10px] tracking-widest text-muted-foreground border-b border-border uppercase font-bold">
@@ -441,7 +669,7 @@ function AdminPage() {
               </div>
             </section>
 
-            <section>
+            <section id="inventory" className="scroll-m-32 pt-4">
               <h2 className="font-serif text-2xl mb-6">Inventory</h2>
               <div className="border border-border divide-y divide-border h-[400px] overflow-y-auto">
                 {products.map((p) => (
@@ -456,15 +684,17 @@ function AdminPage() {
               </div>
             </section>
           </div>
-        </TabsContent>
+            </div>
+          )}
 
-        <TabsContent value="header" className="space-y-8">
-          <Form {...homepageForm}>
-            <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit as any, onHomepageError)} className="space-y-12 pb-20">
-              <section className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <Layout className="w-5 h-5 text-gold" />
-                  <h2 className="text-2xl font-serif">Header Identity & Actions</h2>
+          {currentTab === 'header' && (
+            <div className="space-y-8">
+              <Form {...homepageForm}>
+                <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit as any, onHomepageError)} className="space-y-12 pb-20">
+                  <section id="header-identity" className="space-y-6 scroll-m-32 pt-4">
+                    <div className="flex items-center gap-2">
+                      <Layout className="w-5 h-5 text-gold" />
+                      <h2 className="text-2xl font-serif">Header Identity & Actions</h2>
                 </div>
                 <Card>
                   <CardContent className="pt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -495,7 +725,7 @@ function AdminPage() {
 
               <Separator />
 
-              <section className="space-y-6">
+              <section id="left-nav" className="space-y-6 scroll-m-32 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Layout className="w-5 h-5 text-gold" />
@@ -604,7 +834,7 @@ function AdminPage() {
 
               <Separator />
 
-              <section className="space-y-6">
+              <section id="right-nav" className="space-y-6 scroll-m-32 pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Layout className="w-5 h-5 text-gold" />
@@ -646,12 +876,14 @@ function AdminPage() {
                 >
                   {updateConfigMutation.isPending ? "Saving Changes..." : "Save Header Config"}
                 </Button>
-              </div>
-            </form>
-          </Form>
-        </TabsContent>
+                </div>
+              </form>
+            </Form>
+          </div>
+          )}
 
-        <TabsContent value="homepage" className="space-y-8">
+          {currentTab === 'homepage' && (
+            <div className="space-y-8">
           {!config && (
             <Card className="border-gold bg-gold/5">
               <CardHeader>
@@ -664,7 +896,7 @@ function AdminPage() {
           {config && (
             <Form {...homepageForm}>
               <form onSubmit={homepageForm.handleSubmit(onHomepageSubmit as any, onHomepageError)} className="space-y-12 pb-20">
-                <section className="space-y-6">
+                <section id="hero" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center gap-2">
                     <Layout className="w-5 h-5 text-gold" />
                     <h2 className="text-2xl font-serif">Hero Section</h2>
@@ -702,7 +934,7 @@ function AdminPage() {
 
                 <Separator />
 
-                <section className="space-y-6">
+                <section id="promo" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -742,7 +974,7 @@ function AdminPage() {
 
                 <Separator />
 
-                <section className="space-y-6">
+                <section id="enroll" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center gap-2">
                     <Plus className="w-5 h-5 text-gold" />
                     <h2 className="text-2xl font-serif">Enroll Plan Section</h2>
@@ -768,7 +1000,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Promises */}
-                <section className="space-y-6">
+                <section id="promises" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -804,7 +1036,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Category Grid */}
-                <section className="space-y-6">
+                <section id="category-grid" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Layout className="w-5 h-5 text-gold" />
@@ -840,7 +1072,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Gift Categories */}
-                <section className="space-y-6">
+                <section id="gift-categories" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -879,7 +1111,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Gift Points */}
-                <section className="space-y-6">
+                <section id="gift-points" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -915,7 +1147,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Collections */}
-                <section className="space-y-6">
+                <section id="collections" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -954,7 +1186,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Trust Bar */}
-                <section className="space-y-6">
+                <section id="trust-bar" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -987,7 +1219,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Shop By Price */}
-                <section className="space-y-6">
+                <section id="shop-by-price" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-gold" />
@@ -1020,7 +1252,7 @@ function AdminPage() {
                 <Separator />
 
                 {/* Social Proof */}
-                <section className="space-y-6">
+                <section id="social-proof" className="space-y-6 scroll-m-32 pt-4">
                   <div className="flex items-center gap-2">
                     <Settings className="w-5 h-5 text-gold" />
                     <h2 className="text-2xl font-serif">Social Proof</h2>
@@ -1050,9 +1282,11 @@ function AdminPage() {
               </form>
             </Form>
           )}
-        </TabsContent>
-      </Tabs>
-    </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
 
